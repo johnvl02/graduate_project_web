@@ -4,7 +4,6 @@ import com.john.graduate_project.dto.UserDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 
 import java.util.Date;
 public class JWTGenerator {
@@ -17,9 +16,9 @@ public class JWTGenerator {
                 .setIssuedAt(currentDate)
                 .setExpiration(expireDate)
                 .signWith(SignatureAlgorithm.HS256,SecurityConstants.JWT_SECRET)
-                *//*.signWith(
+                /*.signWith(
                         SignatureAlgorithm.HS256,
-                        SecurityConstants.JWT_SECRET)*//*
+                        SecurityConstants.JWT_SECRET)*/
                 .compact();
     }
 
