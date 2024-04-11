@@ -3,6 +3,7 @@ package com.john.graduate_project.controller.web;
 import com.john.graduate_project.controller.services.CarService;
 import com.john.graduate_project.dto.UserDto;
 import com.john.graduate_project.model.Car;
+import com.john.graduate_project.model.RenterInfo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +45,7 @@ public class CarController {
     public String show(@ModelAttribute("user")UserDto user, @RequestParam(name = "param") String license, Model model){
         List<Object> res = carService.showCar(license,user.userdtoToUSer());
         if (res.size() <=2){
-            model.addAttribute("info", res.get(0));
+            model.addAttribute("info",(RenterInfo) res.get(0));
             return "moreInfo";
         }
         else {
