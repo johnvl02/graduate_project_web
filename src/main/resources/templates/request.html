@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>Requests</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <meta charset="ISO-8859-1">
+  <style>
+    /* CSS styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .menu a {
+      margin-left: 10px;
+      color: #fff;
+      text-decoration: none;
+    }
+    a {
+      margin-left: 10px;
+      color: #fff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body class="table" style="border:2px ">
+<section class="top-nav">
+  <div class="logo">
+    <img src="/cars-photo/logo/logo.png" alt="Car Rental Logo">
+    <h1 style="font-size: 1.5em;margin-block-start: 0.83em;margin-block-end: 0.83em;font-weight: bold;"><a href="/homepage" style="text-decoration: none;color: #fff;">Car Rental</a></h1>
+  </div>
+  <ul id="menu" class="menu">
+  </ul>
+</section>
+<!--<script src="/Javascript/Navbar.js" ></script>-->
+<div>
+  <br>
+  <br>
+  <p id="error" style="color:red;" th:text="${msg}"></p>
+  <div  style='text-align:center'>
+    <div style="font-size:150%;border:5px ">
+      <h2 >Request to rent a car</h2>
+      <table class="table" style="font-size:150%;margin-right:auto;margin-left:auto;border:2px ">
+        <thead class="thead-dark" style="font-size:30px">
+        <tr>
+          <th  scope="col">Name</th>
+          <th  scope="col">Car plate</th>
+          <th  scope="col">Request day</th>
+          <th  scope="col">Request update day</th>
+          <th  scope="col">Number of days</th>
+          <th  scope="col">Status</th>
+          <th  scope="col">Review</th>
+          <th  scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="r1 : ${request_for}">
+          <td th:text="${r1.getRequestCarID().getOwner_username()}"></td>
+          <td th:text="${r1.getRequestCarID().getCar_licence()}"></td>
+          <th scope="row" th:text="${r1.getRequestCarID().getDateTime()}"></th>
+          <th scope="row" th:text="${r1.getUpdateDate()}"></th>
+          <td th:text="${r1.getNumDates()}"></td>
+          <td th:text="${r1.getStatus()}"></td>
+          <td th:if="${r1.getCanReviewCar()} == 0" ><p>You can't review this car yet</p></td>
+          <td th:if="${r1.getCanReviewCar()} == 1" ><button class="btn btn-outline-primary" th:data-licence="${r1.getRequestCarID().getCar_licence()}" th:data-date="${r1.getRequestCarID().getDateTime()}"
+                                                            onclick="reviewCar(this.getAttribute('data-licence'), this.getAttribute('data-date'))"
+                                                            style="width: 150px;height: 50px" >review</button></td>
+          <td th:if="${r1.getCanReviewCar()} == 2" ><p>You have reviewed this car</p></td>
+          <td th:if="${r1.getCanReviewCar()} == 3" ><p>You can't review this car</p></td>
+          <td th:if="${r1.getCanReviewCar()} == 4" ><p>You must wait</p></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <br><br><br><br>
+    <div id="owner" style="text-align:center;display:none">
+      <div style="font-size:150%;border:5px ">
+        <h2>Request for rent your car</h2>
+        <table class="table"  style="font-size:150%;margin-right:auto;margin-left:auto;border:2px ">
+          <thead  class="thead-dark" style="font-size:30px">
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Car plate</th>
+            <th scope="col">Request day</th>
+            <th scope="col">Request update day</th>
+            <th scope="col">Number of days</th>
+            <th scope="col">Status</th>
+            <th scope="col"></th>
+            <th scope="col">Review</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="r1 : ${request_to}">
+            <td><a th:href="'/profile?name='+${r1.getRequestCarID().getRenter_username()}" th:text="${r1.getRequestCarID().getRenter_username()}" style="text-decoration: none;color: blue"></a> </td>
+            <td th:text="${r1.getRequestCarID().getCar_licence()}"></td>
+            <th scope="row" th:text="${r1.getRequestCarID().getDateTime()}"></th>
+            <th scope="row" th:text="${r1.getUpdateDate()}"></th>
+            <td th:text="${r1.getNumDates()}"></td>
+            <td> <input th:if="${r1.getStatus() =='pending'}" type="button" class="btn btn-outline-primary" th:id="${r1.getRequestCarID().getRenter_username()} + ' ' + ${r1.getRequestCarID().getCar_licence()} + ' ' + ${r1.getRequestCarID().getDateTime()}" value="accept"> <label th:unless="${r1.getStatus() =='pending'}"   th:text="${r1.getStatus()}"></label> </td>
+            <td> <input th:if="${r1.getStatus() =='pending'}" type="button" class="btn btn-outline-primary" th:id="${r1.getRequestCarID().getCar_licence()} + ' ' + ${r1.getRequestCarID().getRenter_username()} + ' ' + ${r1.getRequestCarID().getDateTime()}" value="decline"> <label th:unless="${r1.getStatus() =='pending'}"  ></label></td>
+            <td th:if="${r1.getCanReviewUser()} == 0" ><p>You can't review this user yet</p></td>
+            <td th:if="${r1.getCanReviewUser()} == 1" ><input type="button" value="review" class="btn btn-outline-primary" th:data-licence="${r1.getRequestCarID().getCar_licence()}" th:data-date="${r1.getRequestCarID().getDateTime()}"
+                                                              th:data-renter="${r1.getRequestCarID().getRenter_username()}" onclick="reviewUser(this.getAttribute('data-licence'), this.getAttribute('data-date'),
+                                                                this.getAttribute('data-renter'))"></td>
+            <td th:if="${r1.getCanReviewUser()} == 2" ><p>You have reviewed this user</p></td>
+            <td th:if="${r1.getCanReviewUser()} == 3" ><p>You can't review this user</p></td>
+            <td th:if="${r1.getCanReviewUser()} == 4" ><p>You have to answer first</p></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script th:inline="javascript">
+  var username = [[${user.getUsername()}]];
+  /*var role = [[${user.getRole()}]];
+  if (role === "Owner"){*/
+    document.getElementById("menu").innerHTML =
+            "<li><a href=\"/homepage\">Home</a></li>"+
+            "<li><a href=\"/maps\">Maps</a></li>"+
+            "<li><a href=\"/rent\">Rent</a></li>"+
+            "<li><a href=\"/addcar\">Add</a></li>"+
+            "<li><a href=\"/request\">Requests</a></li>"+
+            "<li><a href=\"/contact\">Contact</a></li>"+
+            "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
+            "<li><a href=\"/logout\">logout</a></li>";
+    document.getElementById("owner").style.display = "block";
+  /*}
+  else{
+    document.getElementById("menu").innerHTML =
+            "<li><a href=\"/homepage\">Home</a></li>"+
+            "<li><a href=\"/maps\">Maps</a></li>"+
+            "<li><a href=\"/rent\">Rent</a></li>"+
+            "<li><a href=\"/request\">Requests</a></li>"+
+            "<li><a href=\"/contact\">Contact</a></li>"+
+            "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
+            "<li><a href=\"/logout\">logout</a></li>";
+  }*/
+  document.querySelectorAll('input').forEach(occurence => {
+    let id = occurence.getAttribute('id');
+    occurence.addEventListener('click', function() {
+      var but = document.getElementById(id).value;
+      if (but === "decline"){
+        let temp = id.split(" ");
+        id = temp[1] + " " + temp[0] + " " + temp[2];
+      }
+      window.location.href = "updateStatus?param1=" + id + "&param2=" + but;
+    } );
+  });
+  function reviewCar(licence, date){
+    window.location.href = "request/ReviewCar?param=" + licence + "&param2=" + date;
+  }
+  function reviewUser(licence, date, renter){
+    window.location.href = "request/ReviewUser?param=" + licence + "&param2=" + date + "&param3=" + renter;
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <style>body {
+    //background-image:url('nicegif.gif');
+        background-size:100%;
+        background-repeat: repeat-y;
+        background-attachment: fixed;
+        height:100%;
+        width:100%;
+    }
+    </style>
+    <meta charset="ISO-8859-1">
+    <title>Login Form</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+
+<div class="container">
+    <br><br><br><br><br><br><br>
+    <h1 style="color:black;">Login Form:</h1><div class="card">
+    <div class="card-body">
+        <p id="error" class="exceptions" style="color:red;" th:text="${msg}" ></p>
+        <form action="#" th:action="@{/verification}" th:object="${vCode}" method="post">
+
+            <div class=" form-group row">
+                <label for="code" class="col-sm-2 col-form-label">Verification Code</label>
+                <div class="col-sm-7">
+                    <input type="text" id="code" class="form-control" name="code" placeholder="Enter the code from your email" th:field="*{code}">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-outline-primary">Submit</button>
+            <input type="hidden" th:value="*{username}" th:field="*{username}">
+        </form>
+    </div>
+</div>
+</div>
+</body>
+
+</html>

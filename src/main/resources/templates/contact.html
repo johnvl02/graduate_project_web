@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>Contact</title>
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <meta charset="ISO-8859-1">
+  <style>
+    /* CSS styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .menu a {
+      margin-left: 10px;
+      color: #fff;
+      text-decoration: none;
+    }
+    a {
+      margin-left: 10px;
+      color: #fff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+<section class="top-nav">
+  <div class="logo">
+    <img src="/cars-photo/logo/logo.png" alt="Car Rental Logo">
+    <h1><a href="/homepage">Car Rental</a></h1>
+  </div>
+  <ul id="menu" class="menu">
+  </ul>
+</section>
+<!--<script src="/Javascript/Navbar.js" ></script>-->
+<script th:inline="javascript">
+  var username = [[${user.getUsername()}]];
+  /*var role = [[${user.getRole()}]];
+  if (role === "Owner"){*/
+    document.getElementById("menu").innerHTML =
+            "<li><a href=\"/homepage\">Home</a></li>"+
+            "<li><a href=\"/maps\">Maps</a></li>"+
+            "<li><a href=\"/rent\">Rent</a></li>"+
+            "<li><a href=\"/addcar\">Add</a></li>"+
+            "<li><a href=\"/request\">Requests</a></li>"+
+            "<li><a href=\"/contact\">Contact</a></li>"+
+            "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
+            "<li><a href=\"/logout\">logout</a></li>";
+  /*}
+  else{
+    document.getElementById("menu").innerHTML =
+            "<li><a href=\"/homepage\">Home</a></li>"+
+            "<li><a href=\"/maps\">Maps</a></li>"+
+            "<li><a href=\"/rent\">Rent</a></li>"+
+            "<li><a href=\"/request\">Requests</a></li>"+
+            "<li><a href=\"/contact\">Contact</a></li>"+
+            "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
+            "<li><a href=\"/logout\">logout</a></li>";
+  }*/
+</script>
+
+<div class="container">
+  <h4>If there is a problem or you have a problem with the site please contact with one of the creators of the site</h4>
+  <div>John vlamis, giannhsvlamhs@gmail.com</div>
+</div>
+
+</body>
+</html>

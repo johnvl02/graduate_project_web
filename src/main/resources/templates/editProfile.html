@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="ISO-8859-1">
+  <title>Edit Profile</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <style>
+    /* CSS styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .menu a {
+      margin-left: 10px;
+      color: #fff;
+      text-decoration: none;
+    }
+    a {
+      margin-left: 10px;
+      color: #fff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+<section class="top-nav">
+  <div class="logo">
+    <img src="/cars-photo/logo/logo.png" alt="Car Rental Logo">
+    <h1 style="font-size: 1.5em;margin-block-start: 0.83em;margin-block-end: 0.83em;font-weight: bold;"><a href="/homepage" style="text-decoration: none;color: #fff;">Car Rental</a></h1>
+  </div>
+  <ul id="menu" class="menu">
+  </ul>
+</section>
+<!--<script src="/Javascript/Navbar.js" ></script>-->
+<script th:inline="javascript">
+  var username = [[${user.getUsername()}]];
+  /*var role = [[${user.getRole()}]];
+  if (role === "Owner"){*/
+    document.getElementById("menu").innerHTML =
+            "<li><a href=\"/homepage\">Home</a></li>"+
+            "<li><a href=\"/maps\">Maps</a></li>"+
+            "<li><a href=\"/rent\">Rent</a></li>"+
+            "<li><a href=\"/addcar\">Add</a></li>"+
+            "<li><a href=\"/request\">Requests</a></li>"+
+            "<li><a href=\"/contact\">Contact</a></li>"+
+            "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
+            "<li><a href=\"/logout\">logout</a></li>";
+  /*}
+  else{
+    document.getElementById("menu").innerHTML =
+            "<li><a href=\"/homepage\">Home</a></li>"+
+            "<li><a href=\"/maps\">Maps</a></li>"+
+            "<li><a href=\"/rent\">Rent</a></li>"+
+            "<li><a href=\"/request\">Requests</a></li>"+
+            "<li><a href=\"/contact\">Contact</a></li>"+
+            "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
+            "<li><a href=\"/logout\">logout</a></li>";
+  }*/
+</script>
+<br><br><br><br>
+<div class="container">
+  <h1>Edit your account</h1>
+  <div class="card">
+    <div class="card-body">
+
+      <p id="error" style="color:red;" th:text="${msg}"></p>
+      <form id="form" action="#" th:action="@{/editProfile}" th:object="${temp}" method="post">
+
+        <div class="form-group row">
+          <label for="mail" class="col-sm-2 col-form-label">Email</label>
+          <div class="col-sm-7">
+            <input type="email" id="mail" class="form-control" name="email" placeholder="Enter your email like : test@email.com" th:value="${user.getMail()}" th:field="*{mail}">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="fname" class="col-sm-2 col-form-label">First name</label>
+          <div class="col-sm-7">
+            <input type="text" id="fname" class="form-control" name="first name" placeholder="Enter your first name" th:value="${user.getFirstName()}" th:field="*{firstName}">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="lname" class="col-sm-2 col-form-label">Last name</label>
+          <div class="col-sm-7">
+            <input type="text" id="lname" class="form-control" name="last name" placeholder="Enter your last name" th:value="${user.getLastName()}" th:field="*{lastName}">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="phone" class="col-sm-2 col-form-label">Phone number</label>
+          <div class="col-sm-7">
+            <input type="number" id="phone" class="form-control" name="phone" placeholder="Enter your phone number" th:value="${user.getPhone()}" th:field="*{phone}">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="age" class="col-sm-2 col-form-label">Age</label>
+          <div class="col-sm-7">
+            <input type="number" id="age" class="form-control" name="age" placeholder="Enter your age" th:value="${user.getAge()}" th:field="*{age}">
+          </div>
+        </div>
+
+        <input type="button" onclick="validate()" class="btn btn-primary" value="Submit">
+      </form>
+    </div>
+  </div>
+</div>
+<script th:inline="javascript">
+
+  function validate(){
+    if (phonevalid(document.getElementById("form").elements[3].value) &&  agevalid(document.getElementById("form").elements[4].value)){
+      document.getElementById("form").submit();
+    }
+  }
+
+  function phonevalid(p){
+    return p > 1000000000 && p < 9999999999;
+  }
+
+  function agevalid(a){
+    return a >= 18 && a < 99;
+  }
+</script>
+</body>
+</html>

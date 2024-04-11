@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Maps</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+          crossorigin="">
+  </script>
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <meta charset="ISO-8859-1">
+  <style>
+    /* CSS styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .menu a {
+      margin-left: 10px;
+      color: #fff;
+      text-decoration: none;
+    }
+    a {
+      margin-left: 10px;
+      color: #fff;
+      text-decoration: none;
+    }
+    #map {
+      height: 500px;
+    }
+  </style>
+</head>
+<body>
+  <section class="top-nav">
+    <div class="logo">
+      <img src="/cars-photo/logo/logo.png" alt="Car Rental Logo">
+      <h1><a href="/homepage">Car Rental</a></h1>
+    </div>
+    <ul id="menu" class="menu">
+    </ul>
+  </section>
+<!--  <script src="/Javascript/Navbar.js" ></script>-->
+  <script th:inline="javascript">
+  var username = [[${user.getUsername()}]];
+  /*var role = [[${user.getRole()}]];
+  if (role === "Owner"){*/
+    document.getElementById("menu").innerHTML =
+            "<li><a href=\"/homepage\">Home</a></li>"+
+            "<li><a href=\"/maps\">Maps</a></li>"+
+            "<li><a href=\"/rent\">Rent</a></li>"+
+            "<li><a href=\"/addcar\">Add</a></li>"+
+            "<li><a href=\"/request\">Requests</a></li>"+
+            "<li><a href=\"/contact\">Contact</a></li>"+
+            "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
+            "<li><a href=\"/logout\">logout</a></li>";
+  /*}
+  else{
+    document.getElementById("menu").innerHTML =
+            "<li><a href=\"/homepage\">Home</a></li>"+
+            "<li><a href=\"/maps\">Maps</a></li>"+
+            "<li><a href=\"/rent\">Rent</a></li>"+
+            "<li><a href=\"/request\">Requests</a></li>"+
+            "<li><a href=\"/contact\">Contact</a></li>"+
+            "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
+            "<li><a href=\"/logout\">logout</a></li>";
+  }*/
+</script>
+
+  <div class="container">
+  <h2>Map</h2>
+    <p id="error" style="color:red;" th:text="${msg}"></p>
+  <div id="map"></div>
+  </div>
+  <script th:inline="javascript">
+    var options = {
+      center: [37.983810, 23.727539],
+      zoom: 9
+    }
+
+    var map = L.map('map', options);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    L.control.scale({
+      metric: true,
+      imperial:false
+    }).addTo(map);
+
+    //security problem, the information of the instances can be watch from the browser
+    //rest api with java and javascript to be done
+    var cars = [[${cars}]] ;//return a list with dictionary with all values
+    for (let c in cars){ //c ic also a dictionary with key the fields and value the values
+      let address = cars[c].address;
+      let temp = address.split(",");
+      var startlat =temp[0];
+      var startlon = temp[1];
+      var marker = L.marker([startlat, startlon]).addTo(map);
+      marker.bindPopup(cars[c].model+"<br> <a href='showCar?param="+cars[c].licence+"'>rent now</a>");
+    }
+  </script>
+</body>
+</html>

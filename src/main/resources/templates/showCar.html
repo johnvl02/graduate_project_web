@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title>Car</title>
+    <meta charset="ISO-8859-1">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="">
+    </script>
+    <style>
+        /* CSS styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .menu a {
+            margin-left: 10px;
+            color: #fff;
+            text-decoration: none;
+        }
+        a {
+            margin-left: 10px;
+            color: #fff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <section class="top-nav">
+        <div class="logo">
+            <img src="/cars-photo/logo/logo.png" alt="Car Rental Logo">
+            <h1 style="font-size: 1.5em;margin-block-start: 0.83em;margin-block-end: 0.83em;font-weight: bold;"><a href="/homepage" style="text-decoration: none;color: #fff;">Car Rental</a></h1>
+        </div>
+        <ul id="menu" class="menu">
+        </ul>
+    </section>
+<!--    <script src="/Javascript/Navbar.js" ></script>-->
+    <script th:inline="javascript">
+        var username = [[${user.getUsername()}]];
+        /*var role = [[${user.getRole()}]];
+        if (role === "Owner"){*/
+            document.getElementById("menu").innerHTML =
+                "<li><a href=\"/homepage\">Home</a></li>"+
+                "<li><a href=\"/maps\">Maps</a></li>"+
+                "<li><a href=\"/rent\">Rent</a></li>"+
+                "<li><a href=\"/addcar\">Add</a></li>"+
+                "<li><a href=\"/request\">Requests</a></li>"+
+                "<li><a href=\"/contact\">Contact</a></li>"+
+                "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
+                "<li><a href=\"/logout\">logout</a></li>";
+        /*}
+        else{
+            document.getElementById("menu").innerHTML =
+                "<li><a href=\"/homepage\">Home</a></li>"+
+                "<li><a href=\"/maps\">Maps</a></li>"+
+                "<li><a href=\"/rent\">Rent</a></li>"+
+                "<li><a href=\"/request\">Requests</a></li>"+
+                "<li><a href=\"/contact\">Contact</a></li>"+
+                "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
+                "<li><a href=\"/logout\">logout</a></li>";
+        }*/
+    </script>
+
+    <div class="container">
+        <h1>Available Cars for Rent</h1>
+        <p id="error" style="color:red;" th:text="${msg}"></p>
+        <div class="car-list">
+            <div class="car">
+                <img th:src="@{${car.getPhotoPath()}}" style="width:200px " alt="Car 1">
+                <h3 th:text="${car.getModel()}"></h3>
+                <p th:text="'Licence palte: ' + ${car.getLicence()}"></p>
+                <p th:text="${car.getValue()} + ' $/day'"></p>
+                <p th:text="'Description: ' + ${car.getDescription()}"></p><br>
+                <p th:text="'Available days: ' + ${car.getAvailableDays()}"></p>
+                <div id="review1" class="car-list" style="padding-left: 100px">
+                    <p th:text="${rating}+' ('+${people}+')'"></p><img src="/cars-photo/logo/star.png" alt="stars" style="width: 15px;height: 15px">
+                </div>
+            </div>
+            <div class="car-list">
+                <form id="form1" action="#" th:action="@{showCar/Rent}"  method="get" >
+                    <p id="num"></p>
+                    <label id="daysl" for="days" style="display:none">The number of days for rent this car</label><input type="number" id="days" name="days" style="display:none" >
+                    <input class="btn btn-outline-primary" type="button" onclick="rentcar()" value="Rent car">
+                    <input type="hidden" id="licence" name="licence" style="display:none" th:value="${car.getLicence()}" >
+                </form>
+            </div>
+        </div>
+        <div>
+            <div id="address"></div>
+            <br>
+            <div id="map" style="height: 300px;width: 450px"></div>
+            <br><br>
+        </div>
+        <div id="review2" >
+            <h3>Reviews</h3>
+            <div th:each="r :${Review}">
+                <div class="car-list">
+                    <P th:text="${r.getStars()}"></P><img src="/cars-photo/logo/star.png" alt="stars" style="width: 15px;height: 15px">
+                </div>
+                <p th:text="${r.getReview()}"></p>
+            </div>
+        </div>
+
+    </div>
+    <script th:inline="javascript">
+
+        var address=[[${car.getAddress}]]
+        let latlon = address.split(",");
+        fetch("https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat="+latlon[0]+"&lon="+latlon[1])
+            .then(result => result.json())
+            .then(par => {
+                document.getElementById("address").innerHTML =par.display_name;
+            });
+
+        var startlat = latlon[0];
+        var startlon = latlon[1];
+        var options = {
+            center: [startlat, startlon],
+            zoom: 16
+        }
+        var map = L.map('map', options);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+        L.control.scale({
+            metric: true,
+            imperial:false
+        }).addTo(map);
+        L.marker([latlon[0], latlon[1]]).addTo(map);
+        L.circle([latlon[0], latlon[1]], {
+            color: 'rgb(255,0,51)',
+            fillColor: 'rgba(255,0,51,0.85)',
+            fillOpacity: 0.2,
+            radius: 70
+        }).addTo(map);
+
+
+
+        var rev= [[${Review}]];
+        if (rev!= null){
+        }
+
+        function rentcar(){
+            var check = document.getElementById("days")
+            var check2 = document.getElementById("daysl")
+
+            if (check.style.display=== "none"){
+                check.style.display = "block";
+                check2.style.display = "block";
+            }
+            else {
+                let days =document.getElementById("days").value
+                if (days>=1){
+                    document.getElementById("form1").submit();
+                }
+                else {
+                    document.getElementById("num").innerHTML = "The days must be more than 1 !!"
+                }
+
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>Profile</title>
+  <meta charset="ISO-8859-1">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <style>
+    /* CSS styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .menu a {
+      margin-left: 10px;
+      color: #fff;
+      text-decoration: none;
+    }
+    a {
+      margin-left: 10px;
+      color: #fff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <section class="top-nav">
+    <div class="logo">
+      <img src="/cars-photo/logo/logo.png" alt="Car Rental Logo">
+      <h1 style="font-size: 1.5em;margin-block-start: 0.83em;margin-block-end: 0.83em;font-weight: bold;"><a href="/homepage" style="text-decoration: none;color: #fff;">Car Rental</a></h1>
+    </div>
+    <ul id="menu" class="menu">
+    </ul>
+  </section>
+<!--  <script src="/Javascript/Navbar.js" ></script>-->
+  <div style="max-width: 100%" class="container">
+    <input class="btn btn-outline-primary" type="button" value="Back" onclick="temp()">
+    <h3 style="text-align: center">Profile</h3>
+    <p id="error" style="color:red;" th:text="${msg}"></p>
+    <div class="car-list">
+      <div class="car" style="width: 500px">
+        <h2 th:text="'Name: '+ ${renter.getFirstName()} + ' ' +${renter.getLastName()}"></h2>
+        <p th:text="'E-mail: ' + ${renter.getMail()}"></p>
+        <p th:text="'Phone Number: ' + ${renter.getPhone()}"></p>
+        <p th:text="'Date of diploma :'+ ${info.getDateOfDL()}"></p>
+        <p th:text="'More info :'+${info.getInfo()}"></p>
+        <div id="review1" >
+          <div class="car-list" style="padding-left: 45%">
+            <p th:text="${rating} + ' (' + ${people} + ')'"></p><img src="/cars-photo/logo/star.png" alt="stars" style="width: 15px;height: 15px">
+          </div>
+        </div>
+      </div>
+      <br>
+      <div id="review" >
+        <h3>Reviews</h3>
+        <div id="review2" >
+          <div th:each="r :${reviews}">
+            <div class="car-list">
+              <P th:text="${r.getStars()}"></P><img src="/cars-photo/logo/star.png" alt="stars" style="width: 15px;height: 15px">
+            </div>
+            <p th:text="${r.getReview()}"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script th:inline="javascript">
+    var username = [[${user.getUsername()}]];
+    /*var role = [[${user.getRole()}]];
+    console.log(role)
+    if (role === "Owner"){*/
+      document.getElementById("menu").innerHTML =
+              "<li><a href=\"/homepage\">Home</a></li>"+
+              "<li><a href=\"/maps\">Maps</a></li>"+
+              "<li><a href=\"/rent\">Rent</a></li>"+
+              "<li><a href=\"/addcar\">Add</a></li>"+
+              "<li><a href=\"/request\">Requests</a></li>"+
+              "<li><a href=\"/contact\">Contact</a></li>"+
+              "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
+              "<li><a href=\"/logout\">logout</a></li>";
+    /*}
+    else{
+      document.getElementById("menu").innerHTML =
+              "<li><a href=\"/homepage\">Home</a></li>"+
+              "<li><a href=\"/maps\">Maps</a></li>"+
+              "<li><a href=\"/rent\">Rent</a></li>"+
+              "<li><a href=\"/request\">Requests</a></li>"+
+              "<li><a href=\"/contact\">Contact</a></li>"+
+              "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
+              "<li><a href=\"/logout\">logout</a></li>";
+    }*/
+    function temp(){
+      window.location.href = "/request"
+    }
+  </script>
+</body>
+</html>

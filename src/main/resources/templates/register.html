@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Create Account</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>body
+    {
+        background-size:100%;
+        background-repeat: repeat-y;
+        background-attachment: fixed;
+        height:100%;
+        width:100%;
+    }
+    </style>
+</head>
+<body>
+    <br><br><br><br>
+    <div class="container">
+        <h1>Create account</h1>
+        <div class="card">
+            <div class="card-body">
+
+                <form id="form" action="#" th:action="@{/register}" th:object="${user}" method="post">
+
+                    <p id="error" class="exceptions" style="color:red;" ></p>
+
+                    <div class="form-group row">
+                        <label for="username" class="col-sm-2 col-form-label">User name</label>
+                        <div class="col-sm-7">
+                            <input type="text" id="username" class="form-control" name="username" placeholder="Enter your username" th:field="*{username}">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="password" class="col-sm-2 col-form-label">Password</label>
+                        <div class="col-sm-7">
+                            <input type="password" id="password" class="form-control" name="password" placeholder="Enter your password" th:field="*{password}">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="mail" class="col-sm-2 col-form-label">Email</label>
+                        <div class="col-sm-7">
+                            <input type="email" id="mail" class="form-control" name="email" placeholder="Enter your email like : test@email.com" th:field="*{mail}">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="fname" class="col-sm-2 col-form-label">First name</label>
+                        <div class="col-sm-7">
+                            <input type="text" id="fname" class="form-control" name="first name" placeholder="Enter your first name" th:field="*{firstName}">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="lname" class="col-sm-2 col-form-label">Last name</label>
+                        <div class="col-sm-7">
+                            <input type="text" id="lname" class="form-control" name="last name" placeholder="Enter your last name" th:field="*{lastName}">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="phone" class="col-sm-2 col-form-label">Phone number</label>
+                        <div class="col-sm-7">
+                            <input type="number" id="phone" class="form-control" name="phone" placeholder="Enter your phone number" th:field="*{phone}">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="age" class="col-sm-2 col-form-label">Age</label>
+                        <div class="col-sm-7">
+                            <input type="number" id="age" class="form-control" name="age" placeholder="Enter your age" th:field="*{age}">
+                        </div>
+                    </div>
+
+                    <!--<div class=" form-group row">
+                        <label class="col-sm-2 col-form-label">  </label>
+                        <div th:each="model : ${T(com.web.webproject.model.types.Users).values()}">
+                            <div class="col-sm-7">
+                                <input type="radio" th:field="*{role}" th:value="${model}" class="form-control">
+                                <label  th:for="${#ids.prev('role')}" th:text="${model}">model</label>
+                            </div>
+                        </div>
+                    </div>-->
+
+                    <input type="button" onclick="validate()" class="btn btn-outline-primary" value="Submit">
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        function validate(){
+            var username = document.getElementById("username").value;
+            var pass = document.getElementById("password").value;
+            var email = document.getElementById("mail").value;
+            let phone = document.getElementById("phone").value;
+            var x4 = phonevalid(phone);//check if the user have entered a valid phone number
+            let age = document.getElementById("age").value;
+            var x5 = agevalid(age);//check the age is correct
+            // var sel1 = document.getElementById("form").elements[7].checked;
+            // var sel2 = document.getElementById("form").elements[8].checked;
+            let f1 = email.includes("@");
+            var f2 = email.includes(".");
+            if (username != null && username !=="" && pass != null && pass !=="" && email != null && email !=="" ){//check if the user have fill the username, password and the email
+                if (f1 && f2){//check if the email have the correct format
+                    if (x4){//check if the user have entered a valid phone number
+                        if (x5){//check if the age is correct
+                            document.getElementById("form").submit();
+                            // if (sel1 === true || sel2 === true){//check if the user have chose a 'role'
+                            //
+                            // }
+                            // else {
+                            //     document.getElementById("error").innerHTML = "Please choose a type of user";
+                            // }
+                        }
+                        else {
+                            document.getElementById("error").innerHTML = "Your age must be between 18 and 99";
+                        }
+
+                    }
+                    else {
+                        document.getElementById("error").innerHTML = "Please enter a valid phone, something like 6912345678 or 2101234567";
+                    }
+                }
+                else {
+                    document.getElementById("error").innerHTML = "Please enter a valid email";
+                }
+            }
+            else if (username == null || username ===""){
+                document.getElementById("error").innerHTML = "The username must be fill in";
+            }
+            else if (pass == null || pass ===""){
+                document.getElementById("error").innerHTML = "The password must be fill in";
+            }
+            else if (email == null || email ===""){
+                document.getElementById("error").innerHTML = "The email must be fill in";
+            }
+            else{
+                document.getElementById("error").innerHTML = "something went wrong, fill all the fields and try again";
+            }
+        }
+
+        function phonevalid(p){
+            return p > 1000000000 && p < 9999999999;
+        }
+
+        function agevalid(a){
+            return a >= 18 && a < 99;
+        }
+    </script>
+</body>
+</html>
+
+

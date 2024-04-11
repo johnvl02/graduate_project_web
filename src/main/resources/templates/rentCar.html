@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>Rent Car</title>
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <meta charset="ISO-8859-1">
+  <style>
+    /* CSS styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .menu a {
+      margin-left: 10px;
+      color: #fff;
+      text-decoration: none;
+    }
+    a {
+      margin-left: 10px;
+      color: #fff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+<section class="top-nav">
+  <div class="logo">
+    <img src="/cars-photo/logo/logo.png" alt="Car Rental Logo">
+    <h1 style="font-size: 1.5em;margin-block-start: 0.83em;margin-block-end: 0.83em;font-weight: bold;"><a href="/homepage" style="text-decoration: none;color: #fff;">Car Rental</a></h1>
+  </div>
+  <ul id="menu" class="menu">
+  </ul>
+</section>
+<!--<script src="/Javascript/Navbar.js" ></script>-->
+<script th:inline="javascript">
+  var username = [[${user.getUsername()}]];
+  /*var role = [[${user.getRole()}]];
+  if (role === "Owner"){*/
+    document.getElementById("menu").innerHTML =
+            "<li><a href=\"/homepage\">Home</a></li>"+
+            "<li><a href=\"/maps\">Maps</a></li>"+
+            "<li><a href=\"/rent\">Rent</a></li>"+
+            "<li><a href=\"/addcar\">Add</a></li>"+
+            "<li><a href=\"/request\">Requests</a></li>"+
+            "<li><a href=\"/contact\">Contact</a></li>"+
+            "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
+            "<li><a href=\"/logout\">logout</a></li>";
+  /*}
+  else{
+    document.getElementById("menu").innerHTML =
+            "<li><a href=\"/homepage\">Home</a></li>"+
+            "<li><a href=\"/maps\">Maps</a></li>"+
+            "<li><a href=\"/rent\">Rent</a></li>"+
+            "<li><a href=\"/request\">Requests</a></li>"+
+            "<li><a href=\"/contact\">Contact</a></li>"+
+            "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
+            "<li><a href=\"/logout\">logout</a></li>";
+  }*/
+</script>
+
+<div class="container" style="width: 80%;max-width: 100%">
+  <h1>Available Cars for Rent</h1>
+  <p id="error" style="color:red;" th:text="${msg}"></p>
+  <div class="car-list">
+    <div th:each="car : ${cars}" class="car">
+      <img th:src="@{${car.getPhotoPath()}}" style="width:200px " alt="Car 1">
+      <h3 th:text="${car.getModel()}"></h3>
+      <p th:text="'$'+ ${car.getValue()} + ' /day'"></p>
+      <button class="btn btn-outline-primary" th:id="${car.getLicence()}" >Rent Now</button>
+    </div>
+  </div>
+</div>
+
+</body>
+<script th:inline="javascript">
+  document.querySelectorAll('button').forEach(occurrence => {
+    let id = occurrence.getAttribute('id');
+    occurrence.addEventListener('click', function() {
+      window.location.href = "showCar?param="+id;
+    } );
+  });
+</script>
+</html>
