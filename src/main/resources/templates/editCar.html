@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Edit Car</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin="">
+    </script>
+    <style>
+        /* CSS styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .menu a {
+            margin-left: 10px;
+            color: #fff;
+            text-decoration: none;
+        }
+        a {
+            margin-left: 10px;
+            color: #fff;
+            text-decoration: none;
+        }
+        ul {
+            list-style-type: none;
+            padding: 10.6px;
+        }
+        #map {
+            height: 200px;
+        }
+        .address { cursor:pointer }
+        .address:hover { color:#AA0000;text-decoration:underline }
+    </style>
+</head>
+<body>
+<section class="top-nav">
+    <div class="logo">
+        <img src="/cars-photo/logo/logo.png" style="max-width: 70px;max-height: 70px" alt="Car Rental Logo">
+        <h1 style="font-size: 1.5em;margin-block-start: 0.83em;margin-block-end: 0.83em;font-weight: bold;"><a href="/homepage" style="text-decoration: none;color: #fff;">Car Rental</a></h1>
+    </div>
+    <ul id="menu">
+    </ul>
+</section>
+<!--<script src="/Javascript/Navbar.js" ></script>-->
+<script th:inline="javascript">
+    var name;
+    var allcookies = document.cookie;
+
+    // Get all the cookies pairs in an array
+    cookiearray = allcookies.split(';');
+
+    // Now take key value pair out of this array
+    for(var i=0; i<cookiearray.length; i++) {
+        if (cookiearray[i].split('=')[1] === "Name"){
+            name = cookiearray[i].split('=')[1];
+        }
+    }
+    //var username = [[${user.getUsername()}]];
+    // var role = [[${user.getRole()}]];
+    // if (role === "Owner"){
+    document.getElementById("menu").innerHTML =
+        "<li><a href=\"/homepage\">Home</a></li>"+
+        "<li><a href=\"/maps\">Maps</a></li>"+
+        "<li><a href=\"/rent?page=0&size=12&sort=none\">Rent</a></li>"+
+        "<li><a href=\"/addcar\">Add a car</a></li>"+
+        "<li><a href=\"\">Requests</a>" +
+        "<div class=\"dropdown_menu\">" +
+        "<ul>" +
+        "<li><a href=\"/requestFor\">Request to rent a car</a></li>" +
+        "<li><a href=\"/requestMy\">Request to rent my car</a></li>" +
+        "</ul>"+
+        "</div>"+
+        "</li>"+
+        "<li><a href=\"/contact\">Contact</a></li>"+
+        "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+name+"</a></li>"+
+        "<li><a href=\"/logout\">logout</a></li>";
+    // }
+    // else{
+    //     document.getElementById("menu").innerHTML =
+    //         "<li><a href=\"/homepage\">Home</a></li>"+
+    //         "<li><a href=\"/maps\">Maps</a></li>"+
+    //         "<li><a href=\"/rent\">Rent</a></li>"+
+    //         "<li><a href=\"/request\">Requests</a></li>"+
+    //         "<li><a href=\"/contact\">Contact</a></li>"+
+    //         "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
+    //         "<li><a href=\"/logout\">logout</a></li>";
+    // }
+</script>
+
+<div class="container">
+    <h1>Edit Car</h1>
+    <div class="card">
+        <div class="card-body">
+            <p id="error" style="color:red;" th:text="${msg}"></p>
+            <form id="form" action="#" th:action="@{/editCar}" th:object="${car}" method="post" enctype="multipart/form-data">
+
+                <h3 th:text="'Edit the car with plate: ' + ${temp.getLicense()}"></h3>
+
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Available Date</label>
+                    <ul>
+                        <li>
+                            <input type="checkbox" id="DateM" class="form-control" name="DateM" value="Monday">
+                            <label for="DateM">Monday</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <input type="checkbox" id="DateTu" class="form-control" name="DateTu" value="Tuesday">
+                            <label for="DateTu">Tuesday</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <input type="checkbox" id="DateW" class="form-control" name="DateW" value="Wednesday">
+                            <label for="DateW">Wednesday</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <input type="checkbox" id="DateTh" class="form-control" name="DateTh" value="Thursday">
+                            <label for="DateTh">Thursday</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <input type="checkbox" id="DateF" class="form-control" name="DateF" value="Friday">
+                            <label for="DateF">Friday</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <input type="checkbox" id="DateSa" class="form-control" name="DateSa" value="Saturday">
+                            <label for="DateSa">Saturday</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <input type="checkbox" id="DateSu" class="form-control" name="DateSu" value="Sunday">
+                            <label for="DateSu">Sunday</label>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <input type="checkbox" id="DateAll" class="form-control" name="DateAll" value="All">
+                            <label for="DateAll">All</label>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="form-group row">
+                    <label for="value" class="col-sm-2 col-form-label">Value of the car per day</label>
+                    <div class="col-sm-7">
+                        <input type="number" id="value" class="form-control" name="value" placeholder="Enter the value of the car per day" th:value="${temp.getValue()}"  th:field="*{value}">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="description" class="col-sm-2 col-form-label">Description</label>
+                    <div class="col-sm-7">
+                        <textarea style="resize: none" class="form-control" id="description" rows="4" cols="50" placeholder="Enter extra characteristics for the car like the days that is available. Max characters 500" th:text="${temp.getDescription()}"></textarea>
+                        <input type="hidden" id="hdescription" class="form-control" name="description"  th:field="*{description}">
+                    </div>
+                </div>
+
+                <div class=" form-group row">
+                    <label for="image" class="col-sm-2 col-form-label">Photo </label>
+                    <div class="col-sm-7">
+                        <input type="file" multiple accept="image/jpeg, image/png" id="image" class="form-control" name="image" placeholder="Enter your address"  >
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="addr" class="col-sm-2 col-form-label">Address for the car</label>
+                    <div class="col-sm-7">
+                        <b>Address Lookup</b>
+                        <div id="search">
+                            <input type="text" id="addr" name="addr" value="" size="58" />
+                            <button type="button" onclick="addr_search();">Search</button>
+                            <div id="results"></div>
+                            <br>
+                            <div>You can drag and drop the pointer were you want</div>
+                        </div>
+                        <div id="map" style="height: 350px"></div>
+                        <input type="text" id="address" class="form-control" style="display: none"  name="address" th:value="${temp.getAddress()}"  th:field="*{address}">
+                    </div>
+                </div>
+
+                <input type="button" onclick="validate()" class="btn btn-primary" value="Submit">
+                <input type="hidden" id="date" th:field="*{availableDays}">
+                <input type="hidden" id="available" th:field="*{available}">
+                <input type="hidden" id="license"  th:field="*{license}">
+            </form>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    var car = [[${temp}]]
+    var loc = car["address"]
+    document.getElementById('address').value = loc
+    document.getElementById('value').value = car["value"]
+    setcheckboxes(car["availableDays"])
+    document.getElementById('license').value = car["license"]
+    function validate(){
+
+        document.getElementById("date").setAttribute("value", checkboxes())
+        document.getElementById("available").setAttribute("value", true)
+        let description = document.getElementById("description").value;
+        document.getElementById("hdescription").setAttribute("value", description);
+        if (confirm("Are you sure for the information you enter?") == true) {
+            document.getElementById("form").submit();
+        }
+        else
+            document.getElementById("error").innerHTML = "Check again the fields and then press the submit";
+    }
+
+    function checkboxes() {
+        var check1 = document.getElementById("DateAll");
+        var check2 = document.getElementById("DateM");
+        var check3 = document.getElementById("DateTu");
+        var check4 = document.getElementById("DateW");
+        var check5 = document.getElementById("DateTh");
+        var check6 = document.getElementById("DateF");
+        var check7 = document.getElementById("DateSa");
+        var check8 = document.getElementById("DateSu");
+        var date = "";
+        if (check1.checked === true) {
+            date = "All";
+        } else {
+            if (check2.checked === true){
+                date = date +"Monday, ";
+            }
+            if (check3.checked === true){
+                date = date +"Tuesday, ";
+            }
+            if (check4.checked === true){
+                date = date +"Wednesday, ";
+            }
+            if (check5.checked === true){
+                date = date +"Thursday, ";
+            }
+            if (check6.checked === true){
+                date = date +"Friday, ";
+            }
+            if (check7.checked === true){
+                date = date +"Saturday, ";
+            }
+            if (check8.checked === true){
+                date = date +"Sunday";
+            }
+        }
+        return date;
+    }
+
+    function setcheckboxes(dates) {
+        dates = dates.split(", ")
+        if (dates.length === 1){
+            document.getElementById("DateAll").checked = true;
+        }
+        else {
+            for( let x of dates){
+                if (x==="Monday"){
+                    document.getElementById("DateM").checked = true;
+                }
+                else if (x==="Tuesday"){
+                    document.getElementById("DateTu").checked = true;
+                }
+                else if (x==="Wednesday"){
+                    document.getElementById("DateW").checked = true;
+                }
+                else if (x==="Thursday"){
+                    document.getElementById("DateTh").checked = true;
+                }
+                else if (x==="Friday"){
+                    document.getElementById("DateF").checked = true;
+                }
+                else if (x==="Saturday"){
+                    document.getElementById("DateSa").checked = true;
+                }
+                else if (x==="Sunday"){
+                    document.getElementById("DateSu").checked = true;
+                }
+
+            }
+        }
+    }
+</script>
+<script>
+    var ad = document.getElementById('address').value
+    ad = ad.split(",")
+    var startlat = ad[0];
+    var startlon = ad[1];
+
+    var options = {
+        center: [startlat, startlon],
+        zoom: 13
+    }
+
+    document.getElementById('address').value = startlat+','+startlon;
+    //document.getElementById('lon').value = startlon;
+
+    var map = L.map('map', options);
+    var nzoom = 16;
+
+    //var map = L.map('map').setView([startlat,startlon ], 13);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+
+    L.control.scale({
+        metric: true,
+        imperial:false
+    }).addTo(map);
+
+    var myMarker = L.marker([startlat, startlon], {title: "Coordinates", alt: "Coordinates", draggable: true}).addTo(map).on('dragend', function() {
+        var lat = myMarker.getLatLng().lat.toFixed(8);
+        var lon = myMarker.getLatLng().lng.toFixed(8);
+        var czoom = map.getZoom();
+        /*if(czoom < 18) { nzoom = czoom + 2; }
+        if(nzoom > 18) { nzoom = 18; }*/
+        if(czoom != 18) { map.setView([lat,lon], czoom); } else { map.setView([lat,lon]); }
+        document.getElementById('address').value = lat+','+lon;
+        //document.getElementById('lon').value = lon;
+        //myMarker.bindPopup("Lat " + lat + "<br />Lon " + lon)/*.openPopup()*/;
+    });
+
+    function chooseAddr(lat1, lng1)
+    {
+        myMarker.closePopup();
+        map.setView([lat1, lng1],16);
+        myMarker.setLatLng([lat1, lng1]);
+        lat = lat1.toFixed(8);
+        lon = lng1.toFixed(8);
+        document.getElementById('address').value = lat+','+lon;
+        //document.getElementById('lon').value = lon;
+        myMarker.bindPopup("Lat " + lat + "<br />Lon " + lon)/*.openPopup()*/;
+    }
+
+    function myFunction(arr)
+    {
+        var out = "<br />";
+        var i;
+
+        if(arr.length > 0)
+        {
+            for(i = 0; i < arr.length; i++)
+            {
+                out += "<div class='address' title='Show Location and Coordinates' onclick='chooseAddr(" + arr[i].lat + ", " + arr[i].lon + ");return false;'>" + arr[i].display_name + "</div>";
+            }
+            document.getElementById('results').innerHTML = out;
+        }
+        else
+        {
+            document.getElementById('results').innerHTML = "Sorry, no results...";
+        }
+
+    }
+
+    function addr_search()
+    {
+        var inp = document.getElementById("addr");
+        var xmlhttp = new XMLHttpRequest();
+        var url = "https://nominatim.openstreetmap.org/search?format=json&limit=3&q=" + inp.value;
+        xmlhttp.onreadystatechange = function()
+        {
+            if (this.readyState == 4 && this.status == 200)
+            {
+                var myArr = JSON.parse(this.responseText);
+                myFunction(myArr);
+            }
+        };
+        xmlhttp.open("GET", url, true);
+        xmlhttp.send();
+    }
+</script>
+
+</body>
+</html>
+
+

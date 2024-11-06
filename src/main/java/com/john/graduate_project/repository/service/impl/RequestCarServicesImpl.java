@@ -28,12 +28,12 @@ public class RequestCarServicesImpl implements RequestCarServices {
     }
 
     @Override
-    public RequestCar findByString(String owner, String licence, LocalDate date, String renter) {
+    public RequestCar findByString(String owner, String license, LocalDate date, String renter) {
         Iterable<RequestCar> rc =  requestCarRepository.findAll();
         for (RequestCar requestCar :rc) {
             if (requestCar.getRequestCarID().getOwner_username().equals(owner) &&
                     requestCar.getRequestCarID().getRenter_username().equals(renter) &&
-                    requestCar.getRequestCarID().getCar_licence().equals(licence) &&
+                    requestCar.getRequestCarID().getCar_license().equals(license) &&
                     requestCar.getRequestCarID().getDateTime().equals(date)) {
                 return requestCar;
             }
@@ -42,9 +42,9 @@ public class RequestCarServicesImpl implements RequestCarServices {
     }
 
     @Override
-    public List<RequestCar> findByLicence(String licence) {
+    public List<RequestCar> findByLicense(String license) {
         List<RequestCar> requestCar1 = new ArrayList<>();
-        requestCarRepository.findAll().forEach(requestCar -> { if (requestCar.getRequestCarID().getCar_licence().equals(licence))requestCar1.add(requestCar);});
+        requestCarRepository.findAll().forEach(requestCar -> { if (requestCar.getRequestCarID().getCar_license().equals(license))requestCar1.add(requestCar);});
         return requestCar1;
     }
 
@@ -66,7 +66,7 @@ public class RequestCarServicesImpl implements RequestCarServices {
     //3=>you can't review
     //4=>you must wait
     private RequestCar setCanReviewCar(RequestCar requestCar) {
-        ReviewForCar review = reviewCarServices.findReview(requestCar.getRequestCarID().getRenter_username(),requestCar.getRequestCarID().getCar_licence());
+        ReviewForCar review = reviewCarServices.findReview(requestCar.getRequestCarID().getRenter_username(),requestCar.getRequestCarID().getCar_license());
         if (review != null){
             if (requestCar.getCanReviewCar() !=2) {
                 requestCar.setCanReviewCar(2);
@@ -76,40 +76,19 @@ public class RequestCarServicesImpl implements RequestCarServices {
         else {
             switch (requestCar.getStatus()) {
                 case "accept" -> {
-                    String[] date = requestCar.getRequestCarID().getDateTime().toString().split("-");
-                    LocalDate d = requestCar.getRequestCarID().getDateTime();
-                    String[] updatedate = requestCar.getUpdateDate().toString().split("-");
-                    LocalDate u = requestCar.getUpdateDate();
-                    String[] now = LocalDate.now().toString().split("-");
-                    if (d.isEqual(u)) {
-                        if (Integer.parseInt(now[1]) > Integer.parseInt(date[1])
-                                || Integer.parseInt(now[2]) > Integer.parseInt(date[2]) + requestCar.getNumDates()) {
-                            if (requestCar.getCanReviewCar() != 1) {
-                                requestCar.setCanReviewCar(1);
-                                requestCarRepository.save(requestCar);
-                            }
-                        } else {
-                            if (requestCar.getCanReviewCar() != 0) {
-                                requestCar.setCanReviewCar(0);
-                                requestCarRepository.save(requestCar);
-                            }
-                        }
-                    }
-                    else {
-                        if (Integer.parseInt(now[1]) > Integer.parseInt(updatedate[1])
-                                || Integer.parseInt(now[2]) > Integer.parseInt(updatedate[2]) + requestCar.getNumDates()) {
-                            if (requestCar.getCanReviewCar() != 1) {
-                                requestCar.setCanReviewCar(1);
-                                requestCarRepository.save(requestCar);
-                            }
-                        }
-                        else {
-                            if (requestCar.getCanReviewCar() != 0) {
-                                requestCar.setCanReviewCar(0);
-                                requestCarRepository.save(requestCar);
-                            }
-                        }
+                    String[] s = requestCar.getDates().split(",");
 
+                    LocalDate lasteday = LocalDate.parse(s[s.length-1]);
+                    if (LocalDate.now().isAfter(lasteday)) {
+                        if (requestCar.getCanReviewCar() != 1) {
+                            requestCar.setCanReviewCar(1);
+                            requestCarRepository.save(requestCar);
+                        }
+                    } else {
+                        if (requestCar.getCanReviewCar() != 0) {
+                            requestCar.setCanReviewCar(0);
+                            requestCarRepository.save(requestCar);
+                        }
                     }
                 }
                 case "decline" -> {
@@ -134,37 +113,18 @@ public class RequestCarServicesImpl implements RequestCarServices {
         else {
             switch (requestCar.getStatus()) {
                 case "accept" -> {
-                    String[] date = requestCar.getRequestCarID().getDateTime().toString().split("-");
-                    LocalDate d = requestCar.getRequestCarID().getDateTime();
-                    String[] updatedate = requestCar.getUpdateDate().toString().split("-");
-                    LocalDate u = requestCar.getUpdateDate();
-                    String[] now = LocalDate.now().toString().split("-");
-                    if (d.isEqual(u)) {
-                        if (Integer.parseInt(now[1]) > Integer.parseInt(date[1])
-                                || Integer.parseInt(now[2]) > Integer.parseInt(date[2]) + requestCar.getNumDates()) {
-                            if (requestCar.getCanReviewUser() != 1) {
-                                requestCar.setCanReviewUser(1);
-                                requestCarRepository.save(requestCar);
-                            }
-                        } else {
-                            if (requestCar.getCanReviewUser() != 0) {
-                                requestCar.setCanReviewUser(0);
-                                requestCarRepository.save(requestCar);
-                            }
+                    String[] s = requestCar.getDates().split(",");
+
+                    LocalDate lasteday = LocalDate.parse(s[s.length-1]);
+                    if (LocalDate.now().isAfter(lasteday)) {
+                        if (requestCar.getCanReviewUser() != 1) {
+                            requestCar.setCanReviewUser(1);
+                            requestCarRepository.save(requestCar);
                         }
-                    }
-                    else {
-                        if (Integer.parseInt(now[1]) > Integer.parseInt(updatedate[1])
-                                || Integer.parseInt(now[2]) > Integer.parseInt(updatedate[2]) + requestCar.getNumDates()) {
-                            if (requestCar.getCanReviewUser() != 1) {
-                                requestCar.setCanReviewUser(1);
-                                requestCarRepository.save(requestCar);
-                            }
-                        } else {
-                            if (requestCar.getCanReviewUser() != 0) {
-                                requestCar.setCanReviewUser(0);
-                                requestCarRepository.save(requestCar);
-                            }
+                    } else {
+                        if (requestCar.getCanReviewUser() != 0) {
+                            requestCar.setCanReviewUser(0);
+                            requestCarRepository.save(requestCar);
                         }
                     }
                 }

@@ -9,14 +9,14 @@ public class RequestCarID implements Serializable {
 
     private String owner_username;
     private String renter_username;
-    private String car_licence;
+    private String car_license;
     private LocalDate dateTime;
 
 
-    public RequestCarID(String owner_username, String renter_username, String car_licence, LocalDate dateTime) {
+    public RequestCarID(String owner_username, String renter_username, String car_license, LocalDate dateTime) {
         this.owner_username = owner_username;
         this.renter_username = renter_username;
-        this.car_licence = car_licence;
+        this.car_license = car_license;
         this.dateTime = dateTime;
     }
 
@@ -39,12 +39,12 @@ public class RequestCarID implements Serializable {
         this.renter_username = renter_username;
     }
 
-    public String getCar_licence() {
-        return car_licence;
+    public String getCar_license() {
+        return car_license;
     }
 
-    public void setCar_licence(String car_license) {
-        this.car_licence = car_license;
+    public void setCar_license(String car_license) {
+        this.car_license = car_license;
     }
 
     public LocalDate getDateTime() {

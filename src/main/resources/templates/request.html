@@ -28,7 +28,7 @@
 <body class="table" style="border:2px ">
 <section class="top-nav">
   <div class="logo">
-    <img src="/cars-photo/logo/logo.png" alt="Car Rental Logo">
+    <img src="/cars-photo/logo/logo.png" style="max-width: 70px;max-height: 70px" alt="Car Rental Logo">
     <h1 style="font-size: 1.5em;margin-block-start: 0.83em;margin-block-end: 0.83em;font-weight: bold;"><a href="/homepage" style="text-decoration: none;color: #fff;">Car Rental</a></h1>
   </div>
   <ul id="menu" class="menu">
@@ -58,14 +58,14 @@
         <tbody>
         <tr th:each="r1 : ${request_for}">
           <td th:text="${r1.getRequestCarID().getOwner_username()}"></td>
-          <td th:text="${r1.getRequestCarID().getCar_licence()}"></td>
+          <td th:text="${r1.getRequestCarID().getCar_license()}"></td>
           <th scope="row" th:text="${r1.getRequestCarID().getDateTime()}"></th>
           <th scope="row" th:text="${r1.getUpdateDate()}"></th>
-          <td th:text="${r1.getNumDates()}"></td>
+          <td th:text="${r1.getDates()}"></td>
           <td th:text="${r1.getStatus()}"></td>
           <td th:if="${r1.getCanReviewCar()} == 0" ><p>You can't review this car yet</p></td>
-          <td th:if="${r1.getCanReviewCar()} == 1" ><button class="btn btn-outline-primary" th:data-licence="${r1.getRequestCarID().getCar_licence()}" th:data-date="${r1.getRequestCarID().getDateTime()}"
-                                                            onclick="reviewCar(this.getAttribute('data-licence'), this.getAttribute('data-date'))"
+          <td th:if="${r1.getCanReviewCar()} == 1" ><button class="btn btn-outline-primary" th:data-license="${r1.getRequestCarID().getCar_license()}" th:data-date="${r1.getRequestCarID().getDateTime()}"
+                                                            onclick="reviewCar(this.getAttribute('data-license'), this.getAttribute('data-date'))"
                                                             style="width: 150px;height: 50px" >review</button></td>
           <td th:if="${r1.getCanReviewCar()} == 2" ><p>You have reviewed this car</p></td>
           <td th:if="${r1.getCanReviewCar()} == 3" ><p>You can't review this car</p></td>
@@ -85,7 +85,7 @@
             <th scope="col">Car plate</th>
             <th scope="col">Request day</th>
             <th scope="col">Request update day</th>
-            <th scope="col">Number of days</th>
+            <th scope="col">Days</th>
             <th scope="col">Status</th>
             <th scope="col"></th>
             <th scope="col">Review</th>
@@ -94,15 +94,15 @@
           <tbody>
           <tr th:each="r1 : ${request_to}">
             <td><a th:href="'/profile?name='+${r1.getRequestCarID().getRenter_username()}" th:text="${r1.getRequestCarID().getRenter_username()}" style="text-decoration: none;color: blue"></a> </td>
-            <td th:text="${r1.getRequestCarID().getCar_licence()}"></td>
+            <td th:text="${r1.getRequestCarID().getCar_license()}"></td>
             <th scope="row" th:text="${r1.getRequestCarID().getDateTime()}"></th>
             <th scope="row" th:text="${r1.getUpdateDate()}"></th>
-            <td th:text="${r1.getNumDates()}"></td>
-            <td> <input th:if="${r1.getStatus() =='pending'}" type="button" class="btn btn-outline-primary" th:id="${r1.getRequestCarID().getRenter_username()} + ' ' + ${r1.getRequestCarID().getCar_licence()} + ' ' + ${r1.getRequestCarID().getDateTime()}" value="accept"> <label th:unless="${r1.getStatus() =='pending'}"   th:text="${r1.getStatus()}"></label> </td>
-            <td> <input th:if="${r1.getStatus() =='pending'}" type="button" class="btn btn-outline-primary" th:id="${r1.getRequestCarID().getCar_licence()} + ' ' + ${r1.getRequestCarID().getRenter_username()} + ' ' + ${r1.getRequestCarID().getDateTime()}" value="decline"> <label th:unless="${r1.getStatus() =='pending'}"  ></label></td>
+            <td th:text="${r1.getDates()}"></td>
+            <td> <input th:if="${r1.getStatus() =='pending'}" type="button" class="btn btn-outline-primary" th:id="${r1.getRequestCarID().getRenter_username()} + ' ' + ${r1.getRequestCarID().getCar_license()} + ' ' + ${r1.getRequestCarID().getDateTime()}" value="accept"> <label th:unless="${r1.getStatus() =='pending'}"   th:text="${r1.getStatus()}"></label> </td>
+            <td> <input th:if="${r1.getStatus() =='pending'}" type="button" class="btn btn-outline-primary" th:id="${r1.getRequestCarID().getCar_license()} + ' ' + ${r1.getRequestCarID().getRenter_username()} + ' ' + ${r1.getRequestCarID().getDateTime()}" value="decline"> <label th:unless="${r1.getStatus() =='pending'}"  ></label></td>
             <td th:if="${r1.getCanReviewUser()} == 0" ><p>You can't review this user yet</p></td>
-            <td th:if="${r1.getCanReviewUser()} == 1" ><input type="button" value="review" class="btn btn-outline-primary" th:data-licence="${r1.getRequestCarID().getCar_licence()}" th:data-date="${r1.getRequestCarID().getDateTime()}"
-                                                              th:data-renter="${r1.getRequestCarID().getRenter_username()}" onclick="reviewUser(this.getAttribute('data-licence'), this.getAttribute('data-date'),
+            <td th:if="${r1.getCanReviewUser()} == 1" ><input type="button" value="review" class="btn btn-outline-primary" th:data-license="${r1.getRequestCarID().getCar_license()}" th:data-date="${r1.getRequestCarID().getDateTime()}"
+                                                              th:data-renter="${r1.getRequestCarID().getRenter_username()}" onclick="reviewUser(this.getAttribute('data-license'), this.getAttribute('data-date'),
                                                                 this.getAttribute('data-renter'))"></td>
             <td th:if="${r1.getCanReviewUser()} == 2" ><p>You have reviewed this user</p></td>
             <td th:if="${r1.getCanReviewUser()} == 3" ><p>You can't review this user</p></td>
@@ -115,17 +115,29 @@
   </div>
 </div>
 <script th:inline="javascript">
-  var username = [[${user.getUsername()}]];
+  var name;
+  var allcookies = document.cookie;
+
+  // Get all the cookies pairs in an array
+  cookiearray = allcookies.split(';');
+
+  // Now take key value pair out of this array
+  for(var i=0; i<cookiearray.length; i++) {
+    if (cookiearray[i].split('=')[1] === "Name"){
+      name = cookiearray[i].split('=')[1];
+    }
+  }
+  //var username = [[${user.getUsername()}]];
   /*var role = [[${user.getRole()}]];
   if (role === "Owner"){*/
     document.getElementById("menu").innerHTML =
             "<li><a href=\"/homepage\">Home</a></li>"+
             "<li><a href=\"/maps\">Maps</a></li>"+
-            "<li><a href=\"/rent\">Rent</a></li>"+
-            "<li><a href=\"/addcar\">Add</a></li>"+
+            "<li><a href=\"/rent?page=0&size=12&sort=none\">Rent</a></li>"+
+            "<li><a href=\"/addcar\">Add a car</a></li>"+
             "<li><a href=\"/request\">Requests</a></li>"+
             "<li><a href=\"/contact\">Contact</a></li>"+
-            "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
+            "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+name+"</a></li>"+
             "<li><a href=\"/logout\">logout</a></li>";
     document.getElementById("owner").style.display = "block";
   /*}
@@ -150,11 +162,11 @@
       window.location.href = "updateStatus?param1=" + id + "&param2=" + but;
     } );
   });
-  function reviewCar(licence, date){
-    window.location.href = "request/ReviewCar?param=" + licence + "&param2=" + date;
+  function reviewCar(license, date){
+    window.location.href = "request/ReviewCar?param=" + license + "&param2=" + date;
   }
-  function reviewUser(licence, date, renter){
-    window.location.href = "request/ReviewUser?param=" + licence + "&param2=" + date + "&param3=" + renter;
+  function reviewUser(license, date, renter){
+    window.location.href = "request/ReviewUser?param=" + license + "&param2=" + date + "&param3=" + renter;
   }
 </script>
 </body>

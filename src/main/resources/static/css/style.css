@@ -62,9 +62,7 @@
 	display: flex;
 	align-items: center;
 }
-.logo img {
-	margin-right: 10px;
-}
+
 .container {
 	width: 80%;
 	margin: 0 auto;
@@ -73,6 +71,11 @@ h1 {
 	text-align: center;
 }
 .car-list {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+.car-list-render {
 	display: flex;
 	flex-wrap: wrap;
 }
@@ -95,17 +98,67 @@ html, body {
 	box-sizing: border-box;
 }
 
-.top-nav {
+/*.top-nav {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	justify-content: space-between;
 	background-color: #00BAF0;
-	background: linear-gradient(to left, #f46b45, #eea849);
-	/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	!*background: linear-gradient(to left, #f46b45, #eea849);*!
+	background: linear-gradient(to left, #854ce0, #0a87cf);
+	!* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ *!
 	color: #FFF;
 	height: 50px;
 	padding: 1em;
+}*/
+
+.top-nav{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: linear-gradient(to left, #854ce0, #0a87cf);
+	height: 50px;
+	width: 100%;
+	padding: 0 5%;
+}
+.top-nav ul{
+	list-style: none;
+	display: flex;
+	margin: 0;
+}
+.top-nav ul li{
+	margin: 0 1rem;
+	/*padding: 10px 30px;*/
+	position: relative;
+}
+.top-nav ul li a{
+	color: #ffffff;
+	text-decoration: none;
+	/*font-size: 20px;*/
+	transition: all 0.3s;
+}
+.top-nav ul li a:hover{
+	color: orangered;
+}
+.dropdown_menu{
+	display: none;
+	width: 230px;
+}
+.top-nav ul li:hover .dropdown_menu{
+	display: block;
+	position: absolute;
+	left: 0;
+	top: 100%;
+	background-color: #0a87cf;
+}
+.top-nav ul li:hover .dropdown_menu ul{
+	display: block;
+	margin: 10px;
+	padding: 0;
+}
+.top-nav ul li:hover .dropdown_menu ul li{
+	width: 200px;
+	/*padding: 10px;*/
 }
 
 .menu {

@@ -1,5 +1,6 @@
 package com.john.graduate_project.dto;
 
+import com.john.graduate_project.model.User;
 import com.john.graduate_project.model.VerificationCode;
 
 public class VerificationCodeDto {
@@ -35,7 +36,8 @@ public class VerificationCodeDto {
     }
     public VerificationCode VCDtoToVC(){
         VerificationCode code1 = new VerificationCode();
-        code1.setUser_username(getUsername());
+        code1.setUsers(new User(getUsername()));
+        code1.setUsername(getUsername());
         code1.setCode(getCode());
         return code1;
     }

@@ -7,6 +7,7 @@ import com.john.graduate_project.repository.service.ReviewUserServices;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 
 
 @Entity
@@ -29,11 +30,11 @@ public class RequestCar {
     private User renter;
 
     @OneToOne
-    @JoinColumn(insertable=false, updatable=false, name = "car_licence")
+    @JoinColumn(insertable=false, updatable=false, name = "car_license")
     private Car car;
 
-    @Column(name = "num_dates")
-    private int numDates;
+    @Column(name = "dates")
+    private String dates;
 
     @Column(name = "status")
     private String status;
@@ -54,37 +55,37 @@ public class RequestCar {
     public RequestCar() {
     }
 
-    public RequestCar(RequestCarID requestCarID, User owner, User renter, Car car, int numDates, String status, int canReviewCar, int canReviewUser) {
+    public RequestCar(RequestCarID requestCarID, User owner, User renter, Car car, String dates, String status, int canReviewCar, int canReviewUser) {
         this.requestCarID = requestCarID;
         this.owner = owner;
         this.renter = renter;
         this.car = car;
-        this.numDates = numDates;
+        this.dates = dates;
         this.status = status;
         this.canReviewCar = canReviewCar;
         this.canReviewUser = canReviewUser;
         this.updateDate =requestCarID.getDateTime();
     }
 
-    public RequestCar(RequestCarID requestCarID, LocalDate updateDate, User owner, User renter, Car car, int numDates, String status, int canReviewCar, int canReviewUser) {
+    public RequestCar(RequestCarID requestCarID, LocalDate updateDate, User owner, User renter, Car car, String dates, String status, int canReviewCar, int canReviewUser) {
         this.requestCarID = requestCarID;
         this.updateDate = updateDate;
         this.owner = owner;
         this.renter = renter;
         this.car = car;
-        this.numDates = numDates;
+        this.dates = dates;
         this.status = status;
         this.canReviewCar = canReviewCar;
         this.canReviewUser = canReviewUser;
     }
 
-    public RequestCar(RequestCarID requestCarID,LocalDate updateDate, User owner, User renter, Car car, int numDates, String status) {
+    public RequestCar(RequestCarID requestCarID, LocalDate updateDate, User owner, User renter, Car car, String dates, String status) {
         this.requestCarID = requestCarID;
         this.updateDate = updateDate;
         this.owner = owner;
         this.renter = renter;
         this.car = car;
-        this.numDates = numDates;
+        this.dates = dates;
         this.status = status;
     }
 
@@ -128,12 +129,12 @@ public class RequestCar {
         this.car = car;
     }
 
-    public int getNumDates() {
-        return numDates;
+    public String getDates() {
+        return dates;
     }
 
-    public void setNumDates(int numDates) {
-        this.numDates = numDates;
+    public void setDates(String numDates) {
+        this.dates = numDates;
     }
 
     public String getStatus() {
@@ -159,6 +160,20 @@ public class RequestCar {
 
     public void setCanReviewUser(int canReviewUser) {
         this.canReviewUser = canReviewUser;
+    }
+
+    public HashMap<String,String> requestToHashmap(){
+        HashMap<String, String> temp = new HashMap<>();
+        temp.put("license", this.getCar().getLicense());
+        temp.put("owner", this.requestCarID.getOwner_username());
+        temp.put("renter", this.requestCarID.getRenter_username());
+        temp.put("request_date", this.requestCarID.getDateTime().toString());
+        temp.put("dates",this.getDates());
+        temp.put("status",this.getStatus());
+        temp.put("update_date", this.getUpdateDate().toString());
+        temp.put("reviewCar",String.valueOf(this.getCanReviewCar()));
+        temp.put("reviewUser",String.valueOf(this.getCanReviewUser()));
+        return temp;
     }
 
 

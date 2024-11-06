@@ -8,11 +8,11 @@ import java.io.Serializable;
 public class ReviewForCarID implements Serializable {
 
     private String renter_username;
-    private String car_licence;
+    private String car_license;
 
-    public ReviewForCarID(String renter_username, String car_licence) {
+    public ReviewForCarID(String renter_username, String car_license) {
         this.renter_username = renter_username;
-        this.car_licence = car_licence;
+        this.car_license = car_license;
     }
 
     public ReviewForCarID() {
@@ -26,11 +26,11 @@ public class ReviewForCarID implements Serializable {
         this.renter_username = renter_username;
     }
 
-    public String getCar_licence() {
-        return car_licence;
+    public String getCar_license() {
+        return car_license;
     }
 
-    public void setCar_licence(String car_licence) {
-        this.car_licence = car_licence;
+    public void setCar_license(String car_license) {
+        this.car_license = car_license;
     }
 }

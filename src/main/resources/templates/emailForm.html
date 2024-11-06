@@ -12,27 +12,37 @@
     }
     </style>
     <meta charset="ISO-8859-1">
-    <title>Verification Form</title>
+    <title>User Email</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <body>
 
 <div class="container">
     <br><br><br><br><br><br><br>
-    <h1 style="color:black;">Verification Form:</h1><div class="card">
+    <h1 style="color:black;">Email Form:</h1><div class="card">
     <div class="card-body">
+        <p>Please insert your username and email to send you a verification code and change your password </p>
         <p id="error" class="exceptions" style="color:red;" th:text="${msg}" ></p>
-        <form action="#" th:action="@{/verification}" th:object="${vCode}" method="post">
+        <!--/*@thymesVar id="user" type="com.john.graduate_project.dto.UserDto"*/-->
+        <form action="#" th:action="@{/resetPassword}" th:object="${user}" method="post">
 
             <div class=" form-group row">
-                <label for="code" class="col-sm-2 col-form-label">Verification Code</label>
+                <label for="username" class="col-sm-2 col-form-label">UserName</label>
                 <div class="col-sm-7">
-                    <input type="text" id="code" class="form-control" name="code" placeholder="Enter the code from your email" th:field="*{code}">
+                    <input type="text" id="username" class="form-control" name="username" placeholder="Enter user name" th:field="*{username}">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="email" class="col-sm-2 col-form-label">Email</label>
+                <div class="col-sm-7">
+                    <input type="text" id="email" class="form-control" name="email" placeholder="Enter your email" th:field="*{mail}">
                 </div>
             </div>
 
             <button type="submit" class="btn btn-outline-primary">Submit</button>
-            <input type="hidden" th:value="*{username}" th:field="*{username}">
+            <br>
+            <br>
         </form>
     </div>
 </div>

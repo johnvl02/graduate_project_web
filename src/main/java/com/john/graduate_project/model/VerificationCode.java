@@ -10,13 +10,12 @@ import java.security.SecureRandom;
 public class VerificationCode {
 
     @Id
-    @Column(name = "user_username")
-    private String user_username;
-    @OneToOne
-    //@MapsId
-    //@JoinColumn(name = "user_username")
-    @JoinColumn(insertable = false, updatable = false, name = "user_username")
-    private User user;
+    @Column(name = "username")
+    private String username;
+    @OneToOne(cascade = CascadeType.ALL)
+    @MapsId("username")
+    @JoinColumn(insertable = false, updatable = false, name = "username")
+    private User users;
 
     @Column(name = "code")
     private int code = getCode();
@@ -26,22 +25,25 @@ public class VerificationCode {
     private static final SecureRandom random = new SecureRandom();
     @Transient
     private static final int upperbound = 999999;
+    @Transient
+    private static final int lowerbound = 100000;
 
 
-    public VerificationCode(String user_username, User user, int code) {
-        this.user_username = user_username;
-        this.user = user;
+    public VerificationCode(String username, User users, int code) {
+        this.username = username;
+        this.users = users;
         this.code = code;
     }
 
-    public VerificationCode(User user) {
-        this.user_username = user.getUsername();
-        this.user = user;
-        this.code = generateCode();
+    public VerificationCode(String username, int code) {
+        this.users = new User(username);
+        this.username = username;
+        this.code = code;
     }
 
-    public VerificationCode(String user_username) {
-        this.user_username = user_username;
+    public VerificationCode(User users) {
+        this.username = users.getUsername();
+        this.users = users;
         this.code = generateCode();
         this.tries = 3;
     }
@@ -49,20 +51,20 @@ public class VerificationCode {
     public VerificationCode() {
     }
 
-    public String getUser_username() {
-        return user_username;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUser_username(String username) {
-        this.user_username = username;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public User getUser() {
-        return user;
+    public User getUsers() {
+        return users;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUsers(User user) {
+        this.users = user;
     }
     public int getCode() {
         return code;
@@ -73,7 +75,7 @@ public class VerificationCode {
     }
 
     public static int generateCode(){
-        return random.nextInt(upperbound);
+        return random.nextInt(lowerbound,upperbound);
     }
 
     public int getTries() {

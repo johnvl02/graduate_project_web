@@ -4,6 +4,8 @@ package com.john.graduate_project.model;
 import com.john.graduate_project.model.ClassIDs.ReviewForCarID;
 import jakarta.persistence.*;
 
+import java.util.HashMap;
+
 @Entity
 @Table(name = "reviewforcar")
 public class ReviewForCar {
@@ -16,7 +18,7 @@ public class ReviewForCar {
     private User renter;
 
     @OneToOne
-    @JoinColumn(insertable = false, updatable = false, name = "car_licence")
+    @JoinColumn(insertable = false, updatable = false, name = "car_license")
     private Car car;
 
     @Column(length = 500, name = "review")
@@ -80,5 +82,12 @@ public class ReviewForCar {
 
     public void setStars(int stars) {
         this.stars = stars;
+    }
+    public HashMap<String,Object> reviewToHashMap(){
+        return new HashMap<>(){{
+            put("username",getReviewForCarID().getRenter_username());
+            put("review", getReview());
+            put("stars",getStars());
+        }};
     }
 }

@@ -7,8 +7,19 @@
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="">
-    </script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
+<!--    <link rel="stylesheet" href="/resources/demos/style.css">-->
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
+
+
+
     <style>
         /* CSS styles */
         body {
@@ -31,25 +42,44 @@
 <body>
     <section class="top-nav">
         <div class="logo">
-            <img src="/cars-photo/logo/logo.png" alt="Car Rental Logo">
+            <img src="/cars-photo/logo/logo.png" style="max-width: 70px;max-height: 70px" alt="Car Rental Logo">
             <h1 style="font-size: 1.5em;margin-block-start: 0.83em;margin-block-end: 0.83em;font-weight: bold;"><a href="/homepage" style="text-decoration: none;color: #fff;">Car Rental</a></h1>
         </div>
-        <ul id="menu" class="menu">
+        <ul id="menu">
         </ul>
     </section>
 <!--    <script src="/Javascript/Navbar.js" ></script>-->
     <script th:inline="javascript">
-        var username = [[${user.getUsername()}]];
+        var name;
+        var allcookies = document.cookie;
+
+        // Get all the cookies pairs in an array
+        cookiearray = allcookies.split(';');
+
+        // Now take key value pair out of this array
+        for(var i=0; i<cookiearray.length; i++) {
+            if (cookiearray[i].split('=')[1] === "Name"){
+                name = cookiearray[i].split('=')[1];
+            }
+        }
+        //var username = [[${user.getUsername()}]];
         /*var role = [[${user.getRole()}]];
         if (role === "Owner"){*/
             document.getElementById("menu").innerHTML =
                 "<li><a href=\"/homepage\">Home</a></li>"+
                 "<li><a href=\"/maps\">Maps</a></li>"+
-                "<li><a href=\"/rent\">Rent</a></li>"+
-                "<li><a href=\"/addcar\">Add</a></li>"+
-                "<li><a href=\"/request\">Requests</a></li>"+
+                "<li><a href=\"/rent?page=0&size=12&sort=none\">Rent</a></li>"+
+                "<li><a href=\"/addcar\">Add a car</a></li>"+
+                "<li><a href=\"\">Requests</a>" +
+                    "<div class=\"dropdown_menu\">" +
+                        "<ul>" +
+                            "<li><a href=\"/requestFor\">Request to rent a car</a></li>" +
+                            "<li><a href=\"/requestMy\">Request to rent my car</a></li>" +
+                        "</ul>"+
+                    "</div>"+
+                "</li>"+
                 "<li><a href=\"/contact\">Contact</a></li>"+
-                "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
+                "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+name+"</a></li>"+
                 "<li><a href=\"/logout\">logout</a></li>";
         /*}
         else{
@@ -67,25 +97,73 @@
     <div class="container">
         <h1>Available Cars for Rent</h1>
         <p id="error" style="color:red;" th:text="${msg}"></p>
-        <div class="car-list">
+        <div class="car-list-render">
             <div class="car">
                 <img th:src="@{${car.getPhotoPath()}}" style="width:200px " alt="Car 1">
                 <h3 th:text="${car.getModel()}"></h3>
-                <p th:text="'Licence palte: ' + ${car.getLicence()}"></p>
+                <p th:text="'License palte: ' + ${car.getLicense()}"></p>
                 <p th:text="${car.getValue()} + ' $/day'"></p>
-                <p th:text="'Description: ' + ${car.getDescription()}"></p><br>
                 <p th:text="'Available days: ' + ${car.getAvailableDays()}"></p>
-                <div id="review1" class="car-list" style="padding-left: 100px">
-                    <p th:text="${rating}+' ('+${people}+')'"></p><img src="/cars-photo/logo/star.png" alt="stars" style="width: 15px;height: 15px">
+                <div id="review1" class="car-list" style="padding-left: 100px; justify-content: left">
+                    <p th:text="${car.getRating()}+' ('+${people}+')'"></p><img src="/cars-photo/logo/star.png" alt="stars" style="width: 15px;height: 15px">
                 </div>
             </div>
             <div class="car-list">
-                <form id="form1" action="#" th:action="@{showCar/Rent}"  method="get" >
-                    <p id="num"></p>
-                    <label id="daysl" for="days" style="display:none">The number of days for rent this car</label><input type="number" id="days" name="days" style="display:none" >
-                    <input class="btn btn-outline-primary" type="button" onclick="rentcar()" value="Rent car">
-                    <input type="hidden" id="licence" name="licence" style="display:none" th:value="${car.getLicence()}" >
-                </form>
+                <div>
+                    <form id="form1" action="#" th:action="@{showCar/Rent}"  method="get" >
+                        <p id="num"></p>
+                        <label id="daysl" for="days" style="display:none">The number of days for rent this car</label>
+                       <!-- <input type="number" id="days" name="days" style="display:none" >-->
+                        <div class="input-group date" id="datepicker">
+                            <input type="text" class="form-control" id="days" name="days" style="display:none">
+                            <span class="input-group-addon">
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </span>
+
+                        </div>
+                        <br>
+                        <input class="btn btn-outline-primary" type="button" onclick="rentcar()" value="Rent car">
+                        <input type="hidden" id="license" name="license" style="display:none" th:value="${car.getLicense()}" >
+
+
+
+
+<!--                    <div class="input-group date form-group" id="datepicker">
+                        <input type="text" class="form-control" id="Dates" name="Dates" placeholder="Select days" required />
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i><span class="count"></span></span>
+                    </div>-->
+
+
+<!--
+
+
+<div class="input-group date" data-provide="datepicker">
+                        <input type="text" class="form-control" id="Date">
+                        <div class="input-group-addon">
+                            <span class="glyphicon glyphicon-th"></span>
+                        </div>
+                    </div>
+
+
+
+                    <div class="span5 col-md-5" id="sandbox-container">
+                        <input type="text" class="form-control" id="datepicker">
+                    </div>
+-->
+
+
+
+
+                    </form>
+                    <br>
+                    <div>
+                        <br><br>
+                        <p th:text="'Description: ' + ${car.getDescription()}"></p>
+                        <p th:text="${car.getNumSeats()}+ ' Seats '"></p>
+                        <p th:text="${car.getTransmission()}"></p>
+                        <p th:text="${car.getFuel()}"></p>
+                    </div>
+                </div>
             </div>
         </div>
         <div>
@@ -96,16 +174,98 @@
         </div>
         <div id="review2" >
             <h3>Reviews</h3>
-            <div th:each="r :${Review}">
-                <div class="car-list">
-                    <P th:text="${r.getStars()}"></P><img src="/cars-photo/logo/star.png" alt="stars" style="width: 15px;height: 15px">
-                </div>
-                <p th:text="${r.getReview()}"></p>
+            <br>
+            <div th:if="${people == 0}">
+                <p>None</p>
             </div>
+            <div th:unless="${people == 0}">
+                <div th:each="r :${Review}">
+                    <div class="car-list" style="justify-content:start ">
+                        <P th:text="${r.getReviewForCarID().getRenter_username()}+'   '+ ${r.getStars()}"></P><img src="/cars-photo/logo/star.png" alt="stars" style="width: 15px;height: 15px">
+                    </div>
+                    <p th:text="${r.getReview()}"></p>
+                    <br>
+                </div>
+            </div>
+            <br>
         </div>
+        <br>
 
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js">
+    </script>
     <script th:inline="javascript">
+        var reserve=[[${reserve}]]
+        console.log(reserve);
+        var days= [0,1,2,3,4,5,6];
+        var availableDays=[[${car.getAvailableDays()}]]
+        if (availableDays ==="All"){
+            var daysof=[];
+        }
+        else {
+            availableDays = availableDays.split(", ");
+            availableDays = fixDays(availableDays);
+            for (let x of availableDays){
+                delete days[x];
+            }
+            var daysof=[];
+            for (let y in days){
+                daysof.push(days.at(y));
+            }
+        }
+
+        function fixDays(x){
+            let days =[];
+            for(let d of x){
+                switch (d){
+                    case "Sunday":
+                        days.push(0);
+                        break;
+                    case "Monday":
+                        days.push(1);
+                        break;
+                    case "Tuesday":
+                        days.push(2);
+                        break;
+                    case "Wednesday":
+                        days.push(3);
+                        break;
+                    case "Thursday":
+                        days.push(4);
+                        break;
+                    case "Friday":
+                        days.push(5);
+                        break;
+                    case "Saturday":
+                        days.push(6);
+                        break;
+                }
+            }
+            return days;
+        }
+
+        $(document).ready(function() {
+            $('#datepicker').datepicker({
+                startDate: new Date(),
+                multidate: true,
+                format: "yyyy-mm-dd",
+                daysOfWeekDisabled: daysof,
+                datesDisabled:reserve,
+                language: 'en'
+            }).on('changeDate', function(e) {
+                // `e` here contains the extra attributes
+                $(this).find('.input-group-addon .count').text(' ' + e.dates.length);
+            });
+        });
 
         var address=[[${car.getAddress}]]
         let latlon = address.split(",");
@@ -154,7 +314,8 @@
             }
             else {
                 let days =document.getElementById("days").value
-                if (days>=1){
+                if (days!= null){
+                    console.log(days)
                     document.getElementById("form1").submit();
                 }
                 else {

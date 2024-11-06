@@ -28,37 +28,38 @@
 <body>
   <section class="top-nav">
     <div class="logo">
-      <img src="/cars-photo/logo/logo.png" alt="Car Rental Logo">
+      <img src="/cars-photo/logo/logo.png" style="max-width: 70px;max-height: 70px" alt="Car Rental Logo">
       <h1 style="font-size: 1.5em;margin-block-start: 0.83em;margin-block-end: 0.83em;font-weight: bold;"><a href="/homepage" style="text-decoration: none;color: #fff;">Car Rental</a></h1>
     </div>
-    <ul id="menu" class="menu">
+    <ul id="menu">
     </ul>
   </section>
 <!--  <script src="/Javascript/Navbar.js" ></script>-->
   <div style="max-width: 100%" class="container">
-    <input class="btn btn-outline-primary" type="button" value="Back" onclick="temp()">
     <h3 style="text-align: center">Profile</h3>
     <p id="error" style="color:red;" th:text="${msg}"></p>
-    <div class="car-list">
+    <div class="car-list" style="justify-content: flex-start">
       <div class="car" style="width: 500px">
-        <h2 th:text="'Name: '+ ${renter.getFirstName()} + ' ' +${renter.getLastName()}"></h2>
+        <h2 th:text="${renter.getFirstName()} + ' ' +${renter.getLastName()}"></h2>
         <p th:text="'E-mail: ' + ${renter.getMail()}"></p>
+        <p th:text="'Age: ' + ${renter.getAge()}"></p>
         <p th:text="'Phone Number: ' + ${renter.getPhone()}"></p>
-        <p th:text="'Date of diploma :'+ ${info.getDateOfDL()}"></p>
-        <p th:text="'More info :'+${info.getInfo()}"></p>
+        <p th:text="'Date of diploma : '+ ${info.getDateOfDL()}"></p>
+        <p th:text="'More info : '+${info.getInfo()}"></p>
         <div id="review1" >
-          <div class="car-list" style="padding-left: 45%">
+          <div class="car-list" style="padding-left: 45%;justify-content: flex-start">
             <p th:text="${rating} + ' (' + ${people} + ')'"></p><img src="/cars-photo/logo/star.png" alt="stars" style="width: 15px;height: 15px">
           </div>
         </div>
       </div>
       <br>
-      <div id="review" >
-        <h3>Reviews</h3>
+      <div id="review" style="max-width: 60%">
+        <br>
+        <h3>Review</h3>
         <div id="review2" >
           <div th:each="r :${reviews}">
-            <div class="car-list">
-              <P th:text="${r.getStars()}"></P><img src="/cars-photo/logo/star.png" alt="stars" style="width: 15px;height: 15px">
+            <div class="car-list" style="justify-content: left">
+              <P th:text="${r.getReviewForUserID().getOwner_username()}+'&emsp;'+${r.getStars()}"></P><img src="/cars-photo/logo/star.png" alt="stars" style="width: 15px;height: 15px">
             </div>
             <p th:text="${r.getReview()}"></p>
           </div>
@@ -67,18 +68,37 @@
     </div>
   </div>
   <script th:inline="javascript">
-    var username = [[${user.getUsername()}]];
+    var name;
+    var allcookies = document.cookie;
+
+    // Get all the cookies pairs in an array
+    cookiearray = allcookies.split(';');
+
+    // Now take key value pair out of this array
+    for(var i=0; i<cookiearray.length; i++) {
+      if (cookiearray[i].split('=')[1] === "Name"){
+        name = cookiearray[i].split('=')[1];
+      }
+    }
+    //var username = [[${user.getUsername()}]];
     /*var role = [[${user.getRole()}]];
     console.log(role)
     if (role === "Owner"){*/
       document.getElementById("menu").innerHTML =
               "<li><a href=\"/homepage\">Home</a></li>"+
               "<li><a href=\"/maps\">Maps</a></li>"+
-              "<li><a href=\"/rent\">Rent</a></li>"+
-              "<li><a href=\"/addcar\">Add</a></li>"+
-              "<li><a href=\"/request\">Requests</a></li>"+
+              "<li><a href=\"/rent?page=0&size=12&sort=none\">Rent</a></li>"+
+              "<li><a href=\"/addcar\">Add a car</a></li>"+
+              "<li><a href=\"\">Requests</a>" +
+                  "<div class=\"dropdown_menu\">" +
+                      "<ul>" +
+                        "<li><a href=\"/requestFor\">Request to rent a car</a></li>" +
+                        "<li><a href=\"/requestMy\">Request to rent my car</a></li>" +
+                      "</ul>"+
+                  "</div>"+
+              "</li>"+
               "<li><a href=\"/contact\">Contact</a></li>"+
-              "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
+              "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+name+"</a></li>"+
               "<li><a href=\"/logout\">logout</a></li>";
     /*}
     else{
@@ -91,9 +111,6 @@
               "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
               "<li><a href=\"/logout\">logout</a></li>";
     }*/
-    function temp(){
-      window.location.href = "/request"
-    }
   </script>
 </body>
 </html>

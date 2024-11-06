@@ -27,25 +27,44 @@
 <body>
 <section class="top-nav">
   <div class="logo">
-    <img src="/cars-photo/logo/logo.png" alt="Car Rental Logo">
+    <img src="/cars-photo/logo/logo.png" style="max-width: 70px;max-height: 70px" alt="Car Rental Logo">
     <h1 style="font-size: 1.5em;margin-block-start: 0.83em;margin-block-end: 0.83em;font-weight: bold;"><a href="/homepage" style="text-decoration: none;color: #fff;">Car Rental</a></h1>
   </div>
-  <ul id="menu" class="menu">
+  <ul id="menu">
   </ul>
 </section>
 <!--<script src="/Javascript/Navbar.js" ></script>-->
 <script th:inline="javascript">
-  var username = [[${user.getUsername()}]];
+  var name;
+  var allcookies = document.cookie;
+
+  // Get all the cookies pairs in an array
+  cookiearray = allcookies.split(';');
+
+  // Now take key value pair out of this array
+  for(var i=0; i<cookiearray.length; i++) {
+    if (cookiearray[i].split('=')[1] === "Name"){
+      name = cookiearray[i].split('=')[1];
+    }
+  }
+  //var username = [[${user.getUsername()}]];
   /*var role = [[${user.getRole()}]];
   if (role === "Owner"){*/
     document.getElementById("menu").innerHTML =
             "<li><a href=\"/homepage\">Home</a></li>"+
             "<li><a href=\"/maps\">Maps</a></li>"+
-            "<li><a href=\"/rent\">Rent</a></li>"+
-            "<li><a href=\"/addcar\">Add</a></li>"+
-            "<li><a href=\"/request\">Requests</a></li>"+
+            "<li><a href=\"/rent?page=0&size=12&sort=none\">Rent</a></li>"+
+            "<li><a href=\"/addcar\">Add a car</a></li>"+
+            "<li><a href=\"\">Requests</a>" +
+                "<div class=\"dropdown_menu\">" +
+                    "<ul>" +
+                      "<li><a href=\"/requestFor\">Request to rent a car</a></li>" +
+                      "<li><a href=\"/requestMy\">Request to rent my car</a></li>" +
+                    "</ul>"+
+                "</div>"+
+            "</li>"+
             "<li><a href=\"/contact\">Contact</a></li>"+
-            "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
+            "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+name+"</a></li>"+
             "<li><a href=\"/logout\">logout</a></li>";
   /*}
   else{
@@ -102,7 +121,6 @@
             <input type="number" id="age" class="form-control" name="age" placeholder="Enter your age" th:value="${user.getAge()}" th:field="*{age}">
           </div>
         </div>
-
         <input type="button" onclick="validate()" class="btn btn-primary" value="Submit">
       </form>
     </div>
@@ -111,8 +129,12 @@
 <script th:inline="javascript">
 
   function validate(){
-    if (phonevalid(document.getElementById("form").elements[3].value) &&  agevalid(document.getElementById("form").elements[4].value)){
-      document.getElementById("form").submit();
+    if (phonevalid(document.getElementById("form").elements[3].value) &&  agevalid(document.getElementById("form").elements[4].value)) {
+      if (confirm("Are you sure for the information you enter?") == true) {
+        document.getElementById("form").submit();
+      }
+      else
+        document.getElementById("error").innerHTML = "Check again the fields and then press the submit";
     }
   }
 

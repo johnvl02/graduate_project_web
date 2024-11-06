@@ -19,21 +19,21 @@ public class ReviewCarServicesImpl implements ReviewCarServices {
     }
 
     @Override
-    public List<ReviewForCar> findByLicence(String licence) {
+    public List<ReviewForCar> findByLicense(String license) {
         Iterable<ReviewForCar> cars = reviewCarRepository.findAll();
         List<ReviewForCar> reviews = new ArrayList<>();
         cars.forEach(r ->{
-            if (r.getReviewForCarID().getCar_licence().equals(licence)) reviews.add(r);
+            if (r.getReviewForCarID().getCar_license().equals(license)) reviews.add(r);
         } );
         return reviews;
     }
 
     @Override
-    public ReviewForCar findReview(String username, String licence) {
+    public ReviewForCar findReview(String username, String license) {
         Iterable<ReviewForCar> cars = reviewCarRepository.findAll();
         for (ReviewForCar r :cars){
             if (r.getReviewForCarID().getRenter_username().equals(username)
-                    && r.getReviewForCarID().getCar_licence().equals(licence))
+                    && r.getReviewForCarID().getCar_license().equals(license))
                 return r;
         }
         return null;

@@ -4,7 +4,7 @@ package com.john.graduate_project.model;
 import com.john.graduate_project.model.ClassIDs.ReviewForUserID;
 import jakarta.persistence.*;
 
-
+import java.util.HashMap;
 
 
 @Entity
@@ -91,4 +91,13 @@ public class ReviewForUser {
     public void setStars(int stars) {
         this.stars = stars;
     }
+
+    public HashMap<String, String> ReviewToHashMap(){
+        HashMap<String,String> hashMap = new HashMap<>();
+        hashMap.put("owner",getReviewForUserID().getOwner_username());
+        hashMap.put("review", getReview());
+        hashMap.put("stars", String.valueOf(getStars()));
+        return hashMap;
+    }
+
 }

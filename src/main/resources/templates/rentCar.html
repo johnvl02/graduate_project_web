@@ -28,25 +28,44 @@
 <body>
 <section class="top-nav">
   <div class="logo">
-    <img src="/cars-photo/logo/logo.png" alt="Car Rental Logo">
+    <img src="/cars-photo/logo/logo.png" style="max-width: 70px;max-height: 70px" alt="Car Rental Logo">
     <h1 style="font-size: 1.5em;margin-block-start: 0.83em;margin-block-end: 0.83em;font-weight: bold;"><a href="/homepage" style="text-decoration: none;color: #fff;">Car Rental</a></h1>
   </div>
-  <ul id="menu" class="menu">
+  <ul id="menu">
   </ul>
 </section>
 <!--<script src="/Javascript/Navbar.js" ></script>-->
 <script th:inline="javascript">
-  var username = [[${user.getUsername()}]];
+  var name;
+  var allcookies = document.cookie;
+
+  // Get all the cookies pairs in an array
+  cookiearray = allcookies.split(';');
+
+  // Now take key value pair out of this array
+  for(var i=0; i<cookiearray.length; i++) {
+    if (cookiearray[i].split('=')[1] === "Name"){
+      name = cookiearray[i].split('=')[1];
+    }
+  }
+  //var username = [[${user.getUsername()}]];
   /*var role = [[${user.getRole()}]];
   if (role === "Owner"){*/
     document.getElementById("menu").innerHTML =
             "<li><a href=\"/homepage\">Home</a></li>"+
             "<li><a href=\"/maps\">Maps</a></li>"+
-            "<li><a href=\"/rent\">Rent</a></li>"+
-            "<li><a href=\"/addcar\">Add</a></li>"+
-            "<li><a href=\"/request\">Requests</a></li>"+
+            "<li><a href=\"/rent?page=0&size=12&sort=none\">Rent</a></li>"+
+            "<li><a href=\"/addcar\">Add a car</a></li>"+
+            "<li><a href=\"\">Requests</a>" +
+                "<div class=\"dropdown_menu\">" +
+                    "<ul>" +
+                      "<li><a href=\"/requestFor\">Request to rent a car</a></li>" +
+                      "<li><a href=\"/requestMy\">Request to rent my car</a></li>" +
+                    "</ul>"+
+                "</div>"+
+            "</li>"+
             "<li><a href=\"/contact\">Contact</a></li>"+
-            "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
+            "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+name+"</a></li>"+
             "<li><a href=\"/logout\">logout</a></li>";
   /*}
   else{
@@ -61,26 +80,81 @@
   }*/
 </script>
 
+
 <div class="container" style="width: 80%;max-width: 100%">
   <h1>Available Cars for Rent</h1>
   <p id="error" style="color:red;" th:text="${msg}"></p>
+
+  <div class="d-flex justify-content-between">
+    <div class="dropdown" style="margin: 20px">
+      <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Rating filter
+      </button>
+      <div class="dropdown-menu" style="width: auto; min-width: auto" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" style="margin-left: 0px" th:href="'rent?page=0&size=' + ${currentSize} + '&sort=none'">default</a>
+        <a class="dropdown-item" style="margin-left: 0px" th:href="'rent?page=0&size=' + ${currentSize} + '&sort=ascending'">ascending</a>
+        <a class="dropdown-item" style="margin-left: 0px" th:href="'rent?page=0&size=' + ${currentSize} + '&sort=descending'">descending</a>
+      </div>
+    </div>
+
+    <div class="dropdown" style="margin: 20px">
+      <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        items
+      </button>
+      <div class="dropdown-menu" style="width: auto; min-width: auto" aria-labelledby="dropdownMenuButton2">
+        <a class="dropdown-item" style="margin-left: 0px" th:href="'rent?page=0&size=20&sort=' + ${currentSort}">20</a>
+        <a class="dropdown-item" style="margin-left: 0px" th:href="'rent?page=0&size=50&sort=' + ${currentSort}">50</a>
+        <a class="dropdown-item" style="margin-left: 0px" th:href="'rent?page=0&size=100&sort=' + ${currentSort}">100</a>
+      </div>
+    </div>
+
+  </div>
   <div class="car-list">
     <div th:each="car : ${cars}" class="car">
       <img th:src="@{${car.getPhotoPath()}}" style="width:200px " alt="Car 1">
       <h3 th:text="${car.getModel()}"></h3>
-      <p th:text="'$'+ ${car.getValue()} + ' /day'"></p>
-      <button class="btn btn-outline-primary" th:id="${car.getLicence()}" >Rent Now</button>
+      <p th:text="'$'+ ${car.getValue()} + '/day'"></p>
+      <div id="review1" class="car-list" style="padding-left: 100px; justify-content: left">
+        <p th:text="${car.getRating()}"></p><img src="/cars-photo/logo/star.png" alt="stars" style="width: 15px;height: 15px">
+      </div>
+      <button class="btn btn-outline-primary" th:id="${car.getLicense()}" >Rent Now</button>
     </div>
   </div>
-</div>
 
+  <div>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+        <li class="page-item">
+          <a th:if="${currentPage==0}" class="page-link" th:href="'rent?page=' + ${currentPage -1} + '&size=' + ${currentSize} + '&sort=' + ${currentSort}" tabindex="-1" style="pointer-events: none">Previous</a>
+          <a th:unless="${currentPage==0}" class="page-link" th:href="'rent?page=' + ${currentPage -1} + '&size=' + ${currentSize} + '&sort=' + ${currentSort}" tabindex="-1">Previous</a>
+        </li>
+        <li th:each="item : ${#numbers.sequence(1, allPages,1)}" th:class="(${item} eq ${currentPage}+1) ? 'page-item active':'page-item'" th:id="${item}">
+            <a class="page-link" th:href="'rent?page=' + ${item - 1} + '&size=' + ${currentSize} + '&sort=' + ${currentSort}" th:text="${item}"></a>
+        </li>
+        <!--<li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>-->
+        <li class="page-item">
+          <a th:if="${currentPage+1==allPages}" class="page-link" th:href="'rent?page=' + ${currentPage+1} + '&size=' + ${currentSize} + '&sort=' + ${currentSort}" style="pointer-events: none" >Next</a>
+          <a th:unless="${currentPage+1 ==allPages}" class="page-link" th:href="'rent?page=' + ${currentPage+1} + '&size=' + ${currentSize} + '&sort=' + ${currentSort}">Next</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  <br><br>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
 <script th:inline="javascript">
   document.querySelectorAll('button').forEach(occurrence => {
     let id = occurrence.getAttribute('id');
-    occurrence.addEventListener('click', function() {
-      window.location.href = "showCar?param="+id;
-    } );
+    if (id != "dropdownMenuButton" && id != "dropdownMenuButton2"){
+      occurrence.addEventListener('click', function() {
+        window.location.href = "showCar?param="+id;
+      } );
+    }
   });
 </script>
 </html>

@@ -30,6 +30,16 @@ public class UserDto {
     public UserDto() {
     }
 
+    public UserDto(String username) {
+        this.username = username;
+    }
+
+    public UserDto(String username, String password, String confPassword) {
+        this.username = username;
+        this.password = password;
+        this.confPassword = confPassword;
+    }
+
     public User userdtoToUSer(){
         return new User(getUsername(), getPassword(), getFirstName(),
                 getLastName(), getMail(), getPhone(), getAge(), getRole());

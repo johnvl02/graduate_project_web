@@ -5,13 +5,15 @@ import com.john.graduate_project.model.types.FuelType;
 import com.john.graduate_project.model.types.TransmissionType;
 import jakarta.persistence.*;
 
+import java.util.HashMap;
+
 @Entity
 @Table(name = "cars")
 public class Car {
 
     @Id
     @Column(name = "license", length = 10)
-    private String licence;
+    private String license;
     @Column(name = "model")
     private String model;
     @Column(name = "fuel")
@@ -32,14 +34,16 @@ public class Car {
     private String address;
     @Column(name = "description", length = 500)
     private String description;
+    @Column(name = "rating")
+    private double rating = 0;
     @Column(insertable = false, updatable = false, name = "owner_username")
     private String owner_username;
     @OneToOne
     @JoinColumn(name = "owner_username")
     private User owner;
 
-    public Car(String licence, String model, FuelType fuel, TransmissionType transmission, String availableDays, boolean available, int numSeats, long value, String photo, String address, String description, String owner_username, User owner) {
-        this.licence = licence;
+    public Car(String license, String model, FuelType fuel, TransmissionType transmission, String availableDays, boolean available, int numSeats, long value, String photo, String address, String description, String owner_username, User owner) {
+        this.license = license;
         this.model = model;
         this.fuel = fuel;
         this.transmission = transmission;
@@ -54,8 +58,8 @@ public class Car {
         this.owner = owner;
     }
 
-    public Car(String licence, String model, FuelType fuel, TransmissionType transmission, String availableDays, boolean available, int numSeats, long value, String photo, String address, String description, String owner_username) {
-        this.licence = licence;
+    public Car(String license, String model, FuelType fuel, TransmissionType transmission, String availableDays, boolean available, int numSeats, long value, String photo, String address, String description, String owner_username) {
+        this.license = license;
         this.model = model;
         this.fuel = fuel;
         this.transmission = transmission;
@@ -69,15 +73,31 @@ public class Car {
         this.owner_username = owner_username;
     }
 
+    public Car(String license, String model, FuelType fuel, TransmissionType transmission, String availableDays, boolean available, int numSeats, long value, String photo, String address, String description, double rating, String owner_username) {
+        this.license = license;
+        this.model = model;
+        this.fuel = fuel;
+        this.transmission = transmission;
+        this.availableDays = availableDays;
+        this.available = available;
+        this.numSeats = numSeats;
+        this.value = value;
+        this.photo = photo;
+        this.address = address;
+        this.description = description;
+        this.rating = rating;
+        this.owner_username = owner_username;
+    }
+
     public Car() {
     }
 
-    public String getLicence() {
-        return licence;
+    public String getLicense() {
+        return license;
     }
 
-    public void setLicence(String license) {
-        this.licence = license;
+    public void setLicense(String license) {
+        this.license = license;
     }
 
     public String getModel() {
@@ -180,4 +200,28 @@ public class Car {
     public void setAddress(String address) {
         this.address = address;
     }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public HashMap<String,Object> carToHashMap(){
+        return new HashMap<>(){{
+            put("license", getLicense());
+            put("model", getModel());
+            put("fuel", getFuel());
+            put("transmission", getTransmission());
+            put("availableDays", getAvailableDays());
+            put("seats", getNumSeats());
+            put("value", getValue());
+            put("address", getAddress());
+            put("description", getDescription());
+            put("rating", getRating());
+        }};
+    }
+
 }

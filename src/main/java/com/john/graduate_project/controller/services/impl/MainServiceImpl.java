@@ -34,52 +34,18 @@ public class MainServiceImpl implements MainService {
 
     @Override
     public List<Car> homePage() {
-        carServices.findAvailableCar();//If a car was unavailable the value will update with this else the value will not be updated
-        return carServices.findAllCars();
+        return carServices.findAvailableCar(0,12,"descending");//If a car was unavailable the value will update with this else the value will not be updated
     }
 
-    @Override
-    public List<Object> profile(User user2, String username) {
-        List<Object> result = new ArrayList<>();
-        Optional<User> optionalUser = userRepository.findById(username);
-        optionalUser.ifPresent(user1 -> {
-            List<ReviewForUser> reviews = reviewUserServices.findReviewsByUsername(username);
-            int count=0;
-            double aver=0;
-            double sum=0;
-            for (ReviewForUser r : reviews) {
-                count++;
-                sum += r.getStars();
-            }
-            if (count!=0){
-                aver = sum / count;
-            }
-            result.add(aver);
-            result.add(count);
-            result.add(reviews);
-            result.add(optionalUser.get().userToUserDto());
-            Optional<RenterInfo> info = renterInfoIRepository.findById(username);
-            info.ifPresent(result::add);
-        });
-        return result;
-    }
 
     @Override
-    public String updateStatus(String id, String value, User user) {
-        String[] str = id.split(" ");// render,licence,date
-        RequestCar rc = requestCarServices.findByString(user.getUsername(),str[1], LocalDate.parse(str[2]), str[0]);
+    public String updateStatus(String id, String value, String username) {
+        String[] str = id.split(" ");// render,license,date
+        RequestCar rc = requestCarServices.findByString(username,str[1], LocalDate.parse(str[2]), str[0]);
         rc.setStatus(value);
         rc.setUpdateDate(LocalDate.now());
         RequestCar requestCar = requestCarServices.saveRequest(rc);
         if (requestCar != null) {
-            if (value.equals("accept")) {
-                Optional<Car> car = carServices.findById(str[1]);
-                car.ifPresent(car1 -> {
-                    car1.setAvailable(false);
-                    carServices.saveCar(car1);
-                });
-
-            }
            return "The request updated successfully";
         }
         else {
@@ -89,6 +55,12 @@ public class MainServiceImpl implements MainService {
 
     @Override
     public List<Car> maps() {
-        return carServices.findAvailableCar();
+        return carServices.findAllCars();
+    }
+
+    @Override
+    public Car findCar(String license) {
+        Optional<Car> optionalCar = carServices.findById(license);
+        return optionalCar.get();
     }
 }

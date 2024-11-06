@@ -33,14 +33,30 @@ public class User {
     @Column(name = "enabled")
     private boolean enabled = false;
     @Column(name = "expire_date")
-    private LocalDate expireDate = LocalDate.now().plusYears(2);
+    private LocalDate expireDate = LocalDate.now().plusYears(1);
 
-/*    @OneToOne(mappedBy = "user")
+    @OneToOne(cascade = CascadeType.ALL, optional = true, mappedBy = "users")
     @PrimaryKeyJoinColumn
-    private VerificationCode code;*/
-    @OneToOne(mappedBy = "renter")
+    private VerificationCode code;
+    @OneToOne(cascade = CascadeType.ALL, optional = true,mappedBy = "renter")
     @PrimaryKeyJoinColumn
     private RenterInfo info;
+
+    public VerificationCode getCode() {
+        return code;
+    }
+
+    public void setCode(VerificationCode code) {
+        this.code = code;
+    }
+
+    public RenterInfo getInfo() {
+        return info;
+    }
+
+    public void setInfo(RenterInfo info) {
+        this.info = info;
+    }
 
     public User(String username, String password, String firstName, String lastName, String mail, long phone, int age, UserType role) {
         this.username = username;
@@ -51,6 +67,10 @@ public class User {
         this.phone = phone;
         this.age = age;
         this.role = role;
+    }
+
+    public User(String username) {
+        this.username = username;
     }
 
     public User() {

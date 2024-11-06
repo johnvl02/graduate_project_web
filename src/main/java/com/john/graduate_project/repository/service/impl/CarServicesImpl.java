@@ -6,6 +6,8 @@ import com.john.graduate_project.repository.CarRepository;
 import com.john.graduate_project.repository.service.CarServices;
 import com.john.graduate_project.repository.service.RequestCarServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -19,73 +21,48 @@ import java.util.Optional;
 public class CarServicesImpl implements CarServices {
 
     private CarRepository carRepository;
-    private RequestCarServices requestCarServices;
 
     @Autowired
     public CarServicesImpl(CarRepository carRepository, RequestCarServices requestCarServices) {
         this.carRepository = carRepository;
-        this.requestCarServices = requestCarServices;
     }
 
     @Override
     public List<Car> findByNama(String name) {
         List<Car> cars = new ArrayList<>();
         carRepository.findAll().forEach(car -> {
-            if (car.getOwner_username().equals(name))cars.add(car);
+            if (car.getOwner_username().equals(name) && car.isAvailable())cars.add(car);
         });
         return cars;
     }
 
     @Override
-    public List<Car> findAvailableCar() {
+    public List<Car> findAvailableCar(int page, int size , String sort) {
         List<Car> cars = new ArrayList<>();
         carRepository.findAll().forEach(car -> {
-            if (car.isAvailable()) cars.add(car);
-            else {
-                List<RequestCar> requestCars = requestCarServices.findByLicence(car.getLicence());
-                requestCars =sortRequest(requestCars);
-                RequestCar requestCarLatest ;
-                int count =0;
-                while (true){
-                    if (requestCars.get(count).getStatus().equals("accept")){
-                        requestCarLatest = requestCars.get(count);
-                        break;
-                    }
-                    else count++;
-                }
-                String[] date = requestCarLatest.getRequestCarID().getDateTime().toString().split("-");
-                LocalDate d = requestCarLatest.getRequestCarID().getDateTime();
-                String[] updatedate = requestCarLatest.getUpdateDate().toString().split("-");
-                LocalDate u = requestCarLatest.getUpdateDate();
-                String[] now = LocalDate.now().toString().split("-");
-                int rentDays = requestCarLatest.getNumDates();
-                if (d.isEqual(u)) {
-                    if (Integer.parseInt(date[2]) + rentDays < Integer.parseInt(now[2]) || Integer.parseInt(date[1]) < Integer.parseInt(now[1])) {//need to change
-                        car.setAvailable(true);
-                        carRepository.save(car);
-                        cars.add(car);
-                    }
-                }
-                else {
-                    if (Integer.parseInt(updatedate[2]) + rentDays < Integer.parseInt(now[2]) || Integer.parseInt(updatedate[1]) < Integer.parseInt(now[1])) {//need to change
-                        car.setAvailable(true);
-                        carRepository.save(car);
-                        cars.add(car);
-                    }
-                }
-            }
+            if (car.isAvailable())
+             cars.add(car);
         });
-        return cars;
+        List<Car> result;
+        switch (sort){
+            case "descending":
+               result = sortCarsD(cars);
+                break;
+            case "ascending":
+                result = sortCarsA(cars);
+                break;
+            default:
+                result = cars;
+                break;
+        }
+        if ((page+1)*size<result.size()){
+            return result.subList(page*size,(page + 1)*size);
+        }
+        else
+            return result.subList(page*size,result.size());
     }
 
-    @Override
-    public List<Car> findAllCars(){
-        List<Car> cars = new ArrayList<>();
-        carRepository.findAll().forEach(car -> cars.add(car));
-        return cars ;
-    }
-
-    private List<RequestCar> sortRequest(List<RequestCar> carList){
+    public List<RequestCar> sortRequest(List<RequestCar> carList){
         RequestCar[] requestArray = carList.toArray(new RequestCar[0]);
         for (int j=1; j < requestArray.length; j++){
             RequestCar key = requestArray[j];
@@ -99,6 +76,40 @@ public class CarServicesImpl implements CarServices {
         return new ArrayList<>(Arrays.asList(requestArray));
     }
 
+    private List<Car> sortCarsA(List<Car> carList){
+        Car[] carArray = carList.toArray(new Car[0]);
+        for (int j=1; j < carArray.length; j++){
+            Car key = carArray[j];
+            int i = j-1;
+            while (i>=0 && key.getRating() < carArray[i].getRating()){
+                carArray[i+1]=carArray[i];
+                i-=1;
+            }
+            carArray[i+1] = key;
+        }
+        return new ArrayList<>(Arrays.asList(carArray));
+    }
+    private List<Car> sortCarsD(List<Car> carList){
+        Car[] carArray = carList.toArray(new Car[0]);
+        for (int j=1; j < carArray.length; j++){
+            Car key = carArray[j];
+            int i = j-1;
+            while (i>=0 && key.getRating() > carArray[i].getRating()){
+                carArray[i+1]=carArray[i];
+                i-=1;
+            }
+            carArray[i+1] = key;
+        }
+        return new ArrayList<>(Arrays.asList(carArray));
+    }
+
+    @Override
+    public List<Car> findAllCars(){
+        List<Car> cars = new ArrayList<>();
+        carRepository.findAll().forEach(car -> cars.add(car));
+        return cars ;
+    }
+
     private int compareDate(LocalDate d1, LocalDate d2){
         return d1.compareTo(d2);
     }
@@ -109,7 +120,12 @@ public class CarServicesImpl implements CarServices {
     }
 
     @Override
-    public Optional<Car> findById(String licence) {
-        return carRepository.findById(licence);
+    public Optional<Car> findById(String license) {
+        return carRepository.findById(license);
+    }
+
+
+    public Page<Car> findCarPage(Pageable pageable){
+        return carRepository.findAll(pageable);
     }
 }

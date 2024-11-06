@@ -28,41 +28,62 @@
 <body>
 <section class="top-nav">
     <div class="logo">
-        <img src="/cars-photo/logo/logo.png" alt="Car Rental Logo">
+        <img src="/cars-photo/logo/logo.png" style="max-width: 70px;max-height: 70px" alt="Car Rental Logo">
         <h1 style="font-size: 1.5em;margin-block-start: 0.83em;margin-block-end: 0.83em;font-weight: bold;"><a href="/homepage" style="text-decoration: none;color: #fff;">Car Rental</a></h1>
     </div>
-    <ul id="menu" class="menu">
+    <ul id="menu">
     </ul>
 </section>
 <!--<script src="/Javascript/Navbar.js" ></script>-->
 <script th:inline="javascript">
-    var token = [[${token}]]
-    if (token != null){
-        localStorage.setItem("token",token)
+    var name;
+    var role;
+    var allcookies = document.cookie;
+
+    // Get all the cookies pairs in an array
+    cookiearray = allcookies.split(';');
+
+    // Now take key value pair out of this array
+    for(var i=0; i<cookiearray.length; i++) {
+        if (cookiearray[i].split('=')[0] === "Name"){
+            name = cookiearray[i].split('=')[1];
+        }
+        else if (cookiearray[i].split('=')[0] === "Role"){
+            role = cookiearray[i].split('=')[1];
+        }
     }
-    var username = [[${user.getUsername()}]];
+    //var username = [[${user.getUsername()}]];
     // var role = [[${user.getRole()}]];
-    // if (role === "Owner"){
+    // if (role === "User"){
         document.getElementById("menu").innerHTML =
             "<li><a href=\"/homepage\">Home</a></li>"+
             "<li><a href=\"/maps\">Maps</a></li>"+
-            "<li><a href=\"/rent\">Rent</a></li>"+
-            "<li><a href=\"/addcar\">Add</a></li>"+
+            "<li><a href=\"/rent?page=0&size=12&sort=none\">Rent</a></li>"+
+            "<li><a href=\"/addcar\">Add a car</a></li>"+
+            "<li><a href=\"\">Requests</a>" +
+                "<div class=\"dropdown_menu\">" +
+                    "<ul>" +
+                        "<li><a href=\"/requestFor\">Request to rent a car</a></li>" +
+                        "<li><a href=\"/requestMy\">Request to rent my car</a></li>" +
+                    "</ul>"+
+                "</div>"+
+            "</li>"+
+            "<li><a href=\"/contact\">Contact</a></li>"+
+            "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+name+"</a></li>"+
+            "<li><a href=\"/logout\">logout</a></li>";
+   /* }
+    else{
+        document.getElementById("menu").innerHTML =
+            "<li><a href=\"/homepage\">Home</a></li>"+
+            "<li><a href=\"/Parking\">Parking</a></li>"+
+            "<li><a href=\"/prices\">Prices</a></li>"+
             "<li><a href=\"/request\">Requests</a></li>"+
             "<li><a href=\"/contact\">Contact</a></li>"+
-            "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
+            "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+name+"</a></li>"+
             "<li><a href=\"/logout\">logout</a></li>";
-    // }
-    // else{
-    //     document.getElementById("menu").innerHTML =
-    //         "<li><a href=\"/homepage\">Home</a></li>"+
-    //         "<li><a href=\"/maps\">Maps</a></li>"+
-    //         "<li><a href=\"/rent\">Rent</a></li>"+
-    //         "<li><a href=\"/request\">Requests</a></li>"+
-    //         "<li><a href=\"/contact\">Contact</a></li>"+
-    //         "<li style=\"background-color:transparent;border:none;color:white;font-size:16px\"><a href=\"/MyProfile\">"+username+"</a></li>"+
-    //         "<li><a href=\"/logout\">logout</a></li>";
-    // }
+    }*/
+
+
 </script>
 
 <div class="container" style="width: 80%;max-width: 100%">
@@ -73,8 +94,8 @@
             <img th:src="@{${car.getPhotoPath()}}" style="width:200px " alt="Car 1">
             <h3 th:text="${car.getModel()}"></h3>
             <p th:text="'$'+ ${car.getValue()} + ' /day'"></p>
-            <div th:if="${car.isAvailable()}"><button class="btn btn-outline-primary" th:id="${car.getLicence()}" >Rent Now</button></div>
-            <div th:unless="${car.isAvailable()}">This car isn't available</div>
+            <div th:if="${car.isAvailable()}"><button class="btn btn-outline-primary" th:id="${car.getLicense()}" >Rent Now</button></div>
+            <!--<div th:unless="${car.isAvailable()}">This car isn't available</div>-->
         </div>
     </div>
 </div>

@@ -7,7 +7,8 @@ import java.util.List;
 
 public interface MainService {
     List<Car> homePage();
-    List<Object> profile(User user, String username);
-    String updateStatus(String id, String value, User user);
+
+    String updateStatus(String id, String value, String username);
     List<Car> maps();
+    Car findCar(String licence);
 }

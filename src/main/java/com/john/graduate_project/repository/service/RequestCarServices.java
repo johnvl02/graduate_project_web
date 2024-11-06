@@ -6,8 +6,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface RequestCarServices {
-    RequestCar findByString(String owner, String licence, LocalDate date, String renter);
-    List<RequestCar> findByLicence(String licence);
+    RequestCar findByString(String owner, String license, LocalDate date, String renter);
+    List<RequestCar> findByLicense(String license);
 
     RequestCar saveRequest(RequestCar requestCar);
 
